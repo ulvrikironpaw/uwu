@@ -15,15 +15,18 @@ namespace UWU
 
         private readonly Harmony harmony = new(PluginGUID);
 
-        private void Awake()
+        internal void Awake()
         {
             Jotunn.Logger.LogInfo($"{PluginName} is active");
+            SpeedometerFeature.Configure(Config);
+            SailingAdjustmentFeature.Configure(Config);
 
-            SailingAdjustmentFeature.Apply(harmony);
-            SpeedometerFeature.Apply(harmony);
+
+            SailingAdjustmentFeature.Patch(harmony);
+            SpeedometerFeature.Patch(harmony);
         }
 
-        void OnGUI()
+        internal void OnGUI()
         {
             if (!Hud.IsUserHidden())
             {

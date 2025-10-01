@@ -1,9 +1,12 @@
-﻿using HarmonyLib;
+﻿using BepInEx.Configuration;
+using HarmonyLib;
+using Jotunn.Extensions;
+using Jotunn.Managers;
 using UnityEngine;
 
 namespace UWU
 {
-    static class SpeedometerFeature
+    static partial class SpeedometerFeature
     {
 
         // This static variable will hold our calculated speed.
@@ -11,7 +14,27 @@ namespace UWU
         private static float currentSpeed = 0f;
         private static bool useKnots = false;
 
-        internal static void Apply(Harmony harmony)
+        private static ConfigEntry<bool> EnableSpeedometer;
+
+        internal static void Configure(ConfigFile config)
+        {
+            EnableSpeedometer = config.BindConfig(
+                section: "Sailing",
+                key: "Enable Speedometer",
+                defaultValue: true,
+                description: "If enabled, a speedometer will appear on the screen. This is a client only setting.",
+                synced: false
+            );
+
+            CommandManager.Instance.AddConsoleCommand(new ToggleConsoleCommand(
+                name: "Speedometer",
+                help: "Enables or disables the UWU.Speedometer option",
+                adminOnly: false,
+                (value) => EnableSpeedometer.Value = value
+            ));
+        }
+
+        internal static void Patch(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(Player), nameof(Player.CustomFixedUpdate));
             var postfix = AccessTools.Method(typeof(SpeedometerFeature), nameof(SpeedometerFeature.Player_CustomFixedUpdate_PostFix));
@@ -21,7 +44,7 @@ namespace UWU
         internal static void OnGUI()
         {
             // Only draw the GUI if the player exists and the game HUD is visible.
-            if (Player.m_localPlayer == null)
+            if (Player.m_localPlayer == null || !EnableSpeedometer.Value)
             {
                 return;
             }
@@ -29,7 +52,8 @@ namespace UWU
             // Define the style for our label's text.
             GUIStyle style = new()
             {
-                fontSize = 32 // A good readable size
+                fontSize = 32, // A good readable size
+                alignment = TextAnchor.MiddleCenter
             };
             style.normal.textColor = Color.white; // White text
 

@@ -1,4 +1,7 @@
-﻿using HarmonyLib;
+﻿using BepInEx.Configuration;
+using HarmonyLib;
+using Jotunn.Extensions;
+using Jotunn.Managers;
 using UnityEngine;
 
 namespace UWU
@@ -16,11 +19,59 @@ namespace UWU
         // The default value of full force.
         private const float MAST_COEFFICIENT_DEFAULT = 1f;
         // The full force when at half mast. This is higher so there is a curve.
-        private const float MAST_COEFFICIENT_HALF = 1.8f;
+        private const float MAST_COEFFICIENT_HALF = 1.6f;
         // The full force when at full mast. This is lower so there is a curve.
         private const float MAST_COEFFICIENT_FULL = 1.4f;
 
-        internal static void Apply(Harmony harmony)
+        private static ConfigEntry<bool> EnablePaddleFaster;
+        private static ConfigEntry<bool> EnableSailingGrace;
+        private static ConfigEntry<bool> EnableFasterBoats;
+
+        internal static void Configure(ConfigFile config)
+        {
+            EnableFasterBoats = config.BindConfig(
+                section: "Sailing",
+                key: "Paddle Faster",
+                defaultValue: true,
+                description: "Reduces headwind penalties. This is a server synced setting.",
+                synced: true
+            );
+            EnablePaddleFaster = config.BindConfig(
+                section: "Sailing",
+                key: "Faster Boats",
+                defaultValue: true,
+                description: "Increases sailing speeds by at least 40%. This is a server synced setting.",
+                synced: true
+            );
+            EnableSailingGrace = config.BindConfig(
+                section: "Sailing",
+                key: "Sailing Grace",
+                defaultValue: true,
+                description: "Reduces the penalty for headwinds. This is a server synced setting.",
+                synced: true
+            );
+
+            CommandManager.Instance.AddConsoleCommand(new ToggleConsoleCommand(
+                name: "FasterBoats",
+                help: "Enables or disables the UWU.FasterBoats option",
+                adminOnly: true,
+                (value) => EnableFasterBoats.Value = value
+            ));
+            CommandManager.Instance.AddConsoleCommand(new ToggleConsoleCommand(
+                name: "PaddleFaster",
+                help: "Enables or disables the UWU.PaddleFaster option",
+                adminOnly: true,
+                (value) => EnablePaddleFaster.Value = value
+            ));
+            CommandManager.Instance.AddConsoleCommand(new ToggleConsoleCommand(
+                name: "SailingGrace",
+                help: "Enables or disables the UWU.SailingGrace option",
+                adminOnly: true,
+                (value) => EnableSailingGrace.Value = value
+            ));
+        }
+
+        internal static void Patch(Harmony harmony)
         {
             ApplySailForceUpdates(harmony);
             ApplyHeadWindUpdates(harmony);
@@ -43,6 +94,11 @@ namespace UWU
 
         static bool Ship_GetSailForce_Prefix(Ship __instance, float sailSize, ref Vector3 __result)
         {
+            if (!EnableSailingGrace.Value)
+            {
+                return true;
+            }
+
             // Grab the relative angle of the wind to the boat and the wind direction.
             Vector3 windDir = EnvMan.instance.GetWindDir();
             float angle = Vector3.Angle(windDir, __instance.transform.forward);
@@ -84,31 +140,41 @@ namespace UWU
             // This is how different ships with different sale force factors are handled.
             __state = new Ship_CustomFixedUpdate_State { initialSailForceFactor = __instance.m_sailForceFactor };
 
-            // Get the current speed from the internal instance. This is gross.
-            var speed = Traverse.Create(__instance).Field<Ship.Speed>("m_speed").Value;
-
             // Apply a coefficient to sailing speed if at full or half mast.
             // This makes the speed of the boat significantly faster.
-            __instance.m_sailForceFactor *= speed switch
+            if (EnableFasterBoats.Value)
             {
-                Ship.Speed.Full => MAST_COEFFICIENT_FULL,
-                Ship.Speed.Half => MAST_COEFFICIENT_HALF,
-                _ => MAST_COEFFICIENT_DEFAULT,
-            };
+                // Get the current speed from the internal instance. This is gross.
+                var speed = Traverse.Create(__instance).Field<Ship.Speed>("m_speed").Value;
+                __instance.m_sailForceFactor *= speed switch
+                {
+                    Ship.Speed.Full => MAST_COEFFICIENT_FULL,
+                    Ship.Speed.Half => MAST_COEFFICIENT_HALF,
+                    _ => MAST_COEFFICIENT_DEFAULT,
+                };
+            }
 
             // m_backwardForce is used to handle both paddle and backwards speed.
             // Switch between speeds based on the current "speed".
-            __instance.m_backwardForce = speed switch
+            if (EnablePaddleFaster.Value)
             {
-                Ship.Speed.Slow => PADDLE_FORCE,
-                _ => BACKWARD_FORCE,
-            };
+                // Get the current speed from the internal instance. This is gross.
+                var speed = Traverse.Create(__instance).Field<Ship.Speed>("m_speed").Value;
+                __instance.m_backwardForce = speed switch
+                {
+                    Ship.Speed.Slow => PADDLE_FORCE,
+                    _ => BACKWARD_FORCE,
+                };
+            }
         }
 
         static void Ship_CustomFixedUpdate_Postfix(Ship __instance, Ship_CustomFixedUpdate_State __state)
         {
-            // Restore the original value after calculations take place.
-            __instance.m_sailForceFactor = __state.initialSailForceFactor;
+            if (EnableFasterBoats.Value)
+            {
+                // Restore the original value after calculations take place.
+                __instance.m_sailForceFactor = __state.initialSailForceFactor;
+            }
         }
 
         /// <summary>
