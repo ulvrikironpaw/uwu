@@ -6,9 +6,9 @@ namespace UWU
     public static class SailingAdjustmentFeature
     {
         // The value to use for paddle backward.
-        private const float BACKWARD_FORCE = 0.4f;
+        private const float BACKWARD_FORCE = 0.38f;
         // The value to use for paddle forward.
-        private const float PADDLE_FORCE = 0.4f;
+        private const float PADDLE_FORCE = 0.38f;
         // The denominator used to reduce the speed when on the edges of a headwind.
         private const float HEADWIND_REDUCTION_FACTOR_MIN = 5.8f;
         // The denominator used to reduce the speed when in a headwind.
