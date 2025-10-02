@@ -26,10 +26,11 @@ namespace UWU
                 synced: false
             );
 
-            CommandManager.Instance.AddConsoleCommand(new ToggleConsoleCommand(
-                name: "Speedometer",
+            CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
+                name: "UWUSpeedometer",
                 help: "Enables or disables the UWU.Speedometer option",
                 adminOnly: false,
+                isCheat: false,
                 (value) => EnableSpeedometer.Value = value
             ));
         }

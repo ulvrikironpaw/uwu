@@ -20,8 +20,6 @@ namespace UWU
             Jotunn.Logger.LogInfo($"{PluginName} is active");
             SpeedometerFeature.Configure(Config);
             SailingAdjustmentFeature.Configure(Config);
-
-
             SailingAdjustmentFeature.Patch(harmony);
             SpeedometerFeature.Patch(harmony);
         }
