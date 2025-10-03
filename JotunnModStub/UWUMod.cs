@@ -27,6 +27,8 @@ namespace UWU
 
             ShipBonkiesFeature.Configure(Config);
             ShipBonkiesFeature.Patch(harmony);
+
+            SailPinFeature.Configure(Config);
         }
 
         internal void OnDestroy()
@@ -40,6 +42,11 @@ namespace UWU
             {
                 SpeedometerFeature.OnGUI();
             }
+        }
+
+        internal void Update()
+        {
+            SailPinFeature.Update();
         }
     }
 }

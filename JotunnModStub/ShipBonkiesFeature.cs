@@ -8,7 +8,6 @@ namespace UWU
 {
     static class ShipBonkiesFeature
     {
-
         private static ConfigEntry<bool> EnableShipBonkies;
 
         internal static void Configure(ConfigFile config)
@@ -63,6 +62,7 @@ namespace UWU
                 10f,
                 layerMask
             );
+
             if (!hasHit)
             {
                 return true;
