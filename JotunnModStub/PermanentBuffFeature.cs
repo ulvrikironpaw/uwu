@@ -18,8 +18,8 @@ namespace UWU
                 section: "Sailing",
                 key: "PermanentModer",
                 defaultValue: true,
-                description: "Permanent applies the Moder buff",
-                synced: false
+                description: "Permanently applies the Moder buff",
+                synced: true
             );
 
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UWU
 {
-    static class SailingAdjustmentFeature
+    static class SailingSpeedFeature
     {
         // The value to use for paddle backward.
         private static float BACKWARD_FORCE = 0.38f;
@@ -31,23 +31,23 @@ namespace UWU
         {
             EnableFasterBoats = config.BindConfig(
                 section: "Sailing",
-                key: "PaddleFaster",
+                key: "FasterBoats",
                 defaultValue: true,
-                description: "Reduces headwind penalties. This is a server synced setting.",
+                description: "Makes ship sail speed about 40% faster.",
                 synced: true
             );
             EnablePaddleFaster = config.BindConfig(
                 section: "Sailing",
-                key: "FasterBoats",
+                key: "PaddleFaster",
                 defaultValue: true,
-                description: "Increases sailing speeds by at least 40%. This is a server synced setting.",
+                description: "If enabled, makes paddling forward and backward about twice as fast.",
                 synced: true
             );
             EnableSailingGrace = config.BindConfig(
                 section: "Sailing",
                 key: "SailingGrace",
                 defaultValue: true,
-                description: "Reduces the penalty for headwinds. This is a server synced setting.",
+                description: "Reduces the penalty for headwinds. Full mast in a headwind is a little slower than the PaddleFaster option",
                 synced: true
             );
 
@@ -79,7 +79,7 @@ namespace UWU
                 name: "UWUPaddleForce",
                 help: "The rate of paddling",
                 adminOnly: true,
-                isCheat: true,
+                isCheat: false,
                 () => BACKWARD_FORCE,
                 (value) =>
                 {
@@ -88,28 +88,28 @@ namespace UWU
                 }));
             CommandManager.Instance.AddConsoleCommand(new FloatConsoleCommand(
                 name: "UWUHWRMin",
-                help: "The factor to reduce speed when at the minimum headwind",
+                help: "For debugging, the factor to reduce speed when at the minimum headwind",
                 adminOnly: true,
                 isCheat: true,
                 () => HEADWIND_REDUCTION_FACTOR_MIN,
                 (value) => HEADWIND_REDUCTION_FACTOR_MIN = value));
             CommandManager.Instance.AddConsoleCommand(new FloatConsoleCommand(
                 name: "UWUHWRMax",
-                help: "The factor to reduce speed when at the maximum headwind",
+                help: "For debugging, the factor to reduce speed when at the maximum headwind",
                 adminOnly: true,
                 isCheat: true,
                 () => HEADWIND_REDUCTION_FACTOR_MAX,
                 (value) => HEADWIND_REDUCTION_FACTOR_MAX = value));
             CommandManager.Instance.AddConsoleCommand(new FloatConsoleCommand(
                 name: "UWUMCFull",
-                help: "The multiplier of sailforce when at half mast",
+                help: "For debugging, The multiplier of sailforce when at half mast",
                 adminOnly: true,
                 isCheat: true,
                 () => MAST_COEFFICIENT_HALF,
                 (value) => MAST_COEFFICIENT_HALF = value));
             CommandManager.Instance.AddConsoleCommand(new FloatConsoleCommand(
                 name: "UWUMCFull",
-                help: "The multiplier of sailforce when at full mast",
+                help: "For debugging, The multiplier of sailforce when at full mast",
                 adminOnly: true,
                 isCheat: true,
                 () => MAST_COEFFICIENT_FULL,
@@ -125,15 +125,15 @@ namespace UWU
         private static void ApplySailForceUpdates(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(Ship), "GetSailForce");
-            var prefix = AccessTools.Method(typeof(SailingAdjustmentFeature), nameof(Ship_GetSailForce_Prefix));
+            var prefix = AccessTools.Method(typeof(SailingSpeedFeature), nameof(Ship_GetSailForce_Prefix));
             harmony.Patch(original, prefix: new(prefix));
         }
 
         private static void ApplyHeadWindUpdates(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(Ship), nameof(Ship.CustomFixedUpdate));
-            var prefix = AccessTools.Method(typeof(SailingAdjustmentFeature), nameof(Ship_CustomFixedUpdate_Prefix));
-            var postfix = AccessTools.Method(typeof(SailingAdjustmentFeature), nameof(Ship_CustomFixedUpdate_Postfix));
+            var prefix = AccessTools.Method(typeof(SailingSpeedFeature), nameof(Ship_CustomFixedUpdate_Prefix));
+            var postfix = AccessTools.Method(typeof(SailingSpeedFeature), nameof(Ship_CustomFixedUpdate_Postfix));
             harmony.Patch(original, prefix: new(prefix), postfix: new(postfix));
         }
 

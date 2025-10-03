@@ -16,8 +16,8 @@ namespace UWU
                 section: "Sailing",
                 key: "ShipBonkies",
                 defaultValue: true,
-                description: "Makes ships destruct with the hammer.",
-                synced: false
+                description: "If enabled, Hammer destructs ships for a full refund when no player is aboard",
+                synced: true
             );
 
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
@@ -44,17 +44,13 @@ namespace UWU
 
         static bool Player_RemovePiece_Prefix(ref bool __result)
         {
-            if (!EnableShipBonkies.Value)
-            {
-                return true;
-            }
+            if (!EnableShipBonkies.Value) return true;
 
             var localPlayer = Player.m_localPlayer;
-            if (localPlayer == null)
-            {
-                return true;
-            }
+            if (localPlayer == null) return true;
 
+            // Only raycast vehicles and character triggers. This keeps the raycast
+            // from accidentally finding water volume, etc.
             var layerMask = (1 << (int)ValheimLayer.CharacterTrigger) | (1 << (int)ValheimLayer.Vehicle);
             var hasHit = Physics.Raycast(
                 GameCamera.instance.transform.position,
@@ -63,18 +59,11 @@ namespace UWU
                 10f,
                 layerMask
             );
-
-            if (!hasHit)
-            {
-                return true;
-            }
-
+            // Return to the original method if no target was found.
+            if (!hasHit) return true;
             // Check if the hit object has a Ship component in its hierarchy
             Ship ship = raycastHit.collider.GetComponentInParent<Ship>();
-            if (ship == null)
-            {
-                return true;
-            }
+            if (ship == null) return true;
 
             if (ship.HasPlayerOnboard())
             {

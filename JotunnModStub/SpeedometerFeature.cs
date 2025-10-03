@@ -23,7 +23,7 @@ namespace UWU
                 section: "Sailing",
                 key: "Speedometer",
                 defaultValue: false,
-                description: "If enabled, a speedometer will appear on the screen. ",
+                description: "If enabled, a speedometer will appear on the screen",
                 synced: false
             );
 
