@@ -29,6 +29,8 @@ namespace UWU
             ShipBonkiesFeature.Patch(harmony);
 
             SailPinFeature.Configure(Config);
+            PermanentBuffFeature.Configure(Config);
+            PermanentBuffFeature.Patch(harmony);
         }
 
         internal void OnDestroy()
@@ -46,6 +48,7 @@ namespace UWU
 
         internal void Update()
         {
+            PermanentBuffFeature.Update();
             SailPinFeature.Update();
         }
     }

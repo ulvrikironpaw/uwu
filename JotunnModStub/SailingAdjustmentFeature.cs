@@ -56,6 +56,7 @@ namespace UWU
                 help: "Enables or disables the UWU.FasterBoats option",
                 adminOnly: true,
                 isCheat: false,
+                () => EnableFasterBoats.Value,
                 (value) => EnableFasterBoats.Value = value
             ));
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
@@ -63,6 +64,7 @@ namespace UWU
                 help: "Enables or disables the UWU.PaddleFaster option",
                 adminOnly: true,
                 isCheat: false,
+                () => EnablePaddleFaster.Value,
                 (value) => EnablePaddleFaster.Value = value
             ));
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
@@ -70,6 +72,7 @@ namespace UWU
                 help: "Enables or disables the UWU.SailingGrace option",
                 adminOnly: true,
                 isCheat: false,
+                () => EnableSailingGrace.Value,
                 (value) => EnableSailingGrace.Value = value
             ));
             CommandManager.Instance.AddConsoleCommand(new FloatConsoleCommand(
@@ -77,6 +80,7 @@ namespace UWU
                 help: "The rate of paddling",
                 adminOnly: true,
                 isCheat: true,
+                () => BACKWARD_FORCE,
                 (value) =>
                 {
                     BACKWARD_FORCE = value;
@@ -87,24 +91,28 @@ namespace UWU
                 help: "The factor to reduce speed when at the minimum headwind",
                 adminOnly: true,
                 isCheat: true,
+                () => HEADWIND_REDUCTION_FACTOR_MIN,
                 (value) => HEADWIND_REDUCTION_FACTOR_MIN = value));
             CommandManager.Instance.AddConsoleCommand(new FloatConsoleCommand(
                 name: "UWUHWRMax",
                 help: "The factor to reduce speed when at the maximum headwind",
                 adminOnly: true,
                 isCheat: true,
+                () => HEADWIND_REDUCTION_FACTOR_MAX,
                 (value) => HEADWIND_REDUCTION_FACTOR_MAX = value));
             CommandManager.Instance.AddConsoleCommand(new FloatConsoleCommand(
                 name: "UWUMCFull",
                 help: "The multiplier of sailforce when at half mast",
                 adminOnly: true,
                 isCheat: true,
+                () => MAST_COEFFICIENT_HALF,
                 (value) => MAST_COEFFICIENT_HALF = value));
             CommandManager.Instance.AddConsoleCommand(new FloatConsoleCommand(
                 name: "UWUMCFull",
                 help: "The multiplier of sailforce when at full mast",
                 adminOnly: true,
                 isCheat: true,
+                () => MAST_COEFFICIENT_FULL,
                 (value) => MAST_COEFFICIENT_FULL = value));
         }
 

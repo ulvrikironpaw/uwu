@@ -27,6 +27,7 @@ namespace UWU
                 help: "Enables or disables the UWU.SailPin option",
                 adminOnly: true,
                 isCheat: false,
+                () => EnableSailPins.Value,
                 (value) => EnableSailPins.Value = value
             ));
 

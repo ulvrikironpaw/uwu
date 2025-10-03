@@ -7,19 +7,21 @@ namespace UWU
 {
     internal class BoolConsoleCommand : ConsoleCommand
     {
-        private readonly Action<bool> configAction;
+        private readonly Func<bool> getValue;
+        private readonly Action<bool> setValue;
         private readonly bool adminOnly;
         private readonly string name;
         private readonly string help;
         private readonly bool isCheat;
 
-        internal BoolConsoleCommand(string name, string help, bool adminOnly, bool isCheat, Action<bool> configAction)
+        internal BoolConsoleCommand(string name, string help, bool adminOnly, bool isCheat, Func<bool> getValue, Action<bool> setValue)
         {
             this.name = name;
             this.help = help;
             this.adminOnly = adminOnly;
             this.isCheat = isCheat;
-            this.configAction = configAction;
+            this.getValue = getValue;
+            this.setValue = setValue;
         }
 
         public override string Name => name;
@@ -31,28 +33,36 @@ namespace UWU
         {
             if (adminOnly && !SynchronizationManager.Instance.PlayerIsAdmin)
             {
-                Jotunn.Logger.LogWarning($"{Name} can only be set by an Admin");
+                MessageHud.instance?.ShowMessage(
+                    MessageHud.MessageType.Center,
+                    $"{Name} can only be set by an Admin");
                 return;
             }
 
             if (args.Length == 0)
             {
-                Jotunn.Logger.LogWarning($"{Name} not set. Missing value");
+                MessageHud.instance?.ShowMessage(
+                    MessageHud.MessageType.Center,
+                    $"{Name} is {getValue()}");
                 return;
             }
 
             switch (args[0].ToLower())
             {
                 case "true":
-                    configAction(true);
-                    Jotunn.Logger.LogInfo($"{Name} set to {true}");
+                    setValue(true);
+                    MessageHud.instance?.ShowMessage(
+                        MessageHud.MessageType.Center,
+                        $"{Name} set to {true}");
                     return;
                 case "false":
-                    configAction(false);
+                    setValue(false);
                     Jotunn.Logger.LogInfo($"{Name} set to {false}");
                     return;
                 default:
-                    Jotunn.Logger.LogWarning($"{Name} not set. Invalid value");
+                    MessageHud.instance?.ShowMessage(
+                        MessageHud.MessageType.Center,
+                        $"{Name} not set. Invalid value");
                     return;
             }
         }
@@ -60,19 +70,21 @@ namespace UWU
 
     internal class FloatConsoleCommand : ConsoleCommand
     {
-        private readonly Action<float> configAction;
+        private readonly Func<float> getValue;
+        private readonly Action<float> setValue;
         private readonly bool adminOnly;
         private readonly string name;
         private readonly string help;
         private readonly bool isCheat;
 
-        internal FloatConsoleCommand(string name, string help, bool adminOnly, bool isCheat, Action<float> configAction)
+        internal FloatConsoleCommand(string name, string help, bool adminOnly, bool isCheat, Func<float> getValue, Action<float> setValue)
         {
             this.name = name;
             this.help = help;
             this.adminOnly = adminOnly;
             this.isCheat = isCheat;
-            this.configAction = configAction;
+            this.getValue = getValue;
+            this.setValue = setValue;
         }
 
         public override string Name => name;
@@ -84,26 +96,34 @@ namespace UWU
         {
             if (adminOnly && !SynchronizationManager.Instance.PlayerIsAdmin)
             {
-                Jotunn.Logger.LogWarning($"{Name} can only be set by an Admin");
+                MessageHud.instance?.ShowMessage(
+                    MessageHud.MessageType.Center,
+                    $"{Name} can only be set by an Admin");
                 return;
             }
 
             if (args.Length == 0)
             {
-                Jotunn.Logger.LogWarning($"{Name} not set. Missing value");
+                MessageHud.instance?.ShowMessage(
+                    MessageHud.MessageType.Center,
+                    $"{Name} is {getValue()}");
                 return;
             }
 
             try
             {
                 var floatValue = float.Parse(args[0]);
-                configAction(floatValue);
-                Jotunn.Logger.LogInfo($"{Name} set to {floatValue}");
+                setValue(floatValue);
+
+                MessageHud.instance?.ShowMessage(
+                    MessageHud.MessageType.Center,
+                    $"{Name} set to {floatValue}");
             }
             catch
             {
-
-                Jotunn.Logger.LogWarning($"{Name} not set. Invalid value");
+                MessageHud.instance?.ShowMessage(
+                    MessageHud.MessageType.Center,
+                    $"{Name} not set. Invalid value");
             }
         }
     }

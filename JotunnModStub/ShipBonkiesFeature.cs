@@ -25,6 +25,7 @@ namespace UWU
                 help: "Enables or disables the UWU.ShipBonkies option",
                 adminOnly: true,
                 isCheat: false,
+                () => EnableShipBonkies.Value,
                 (value) => EnableShipBonkies.Value = value
             ));
         }
