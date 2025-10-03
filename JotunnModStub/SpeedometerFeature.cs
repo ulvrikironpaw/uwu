@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UWU
 {
-    static partial class SpeedometerFeature
+    static class SpeedometerFeature
     {
 
         // This static variable will hold our calculated speed.

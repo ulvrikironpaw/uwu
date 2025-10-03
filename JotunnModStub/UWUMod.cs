@@ -18,10 +18,20 @@ namespace UWU
         internal void Awake()
         {
             Jotunn.Logger.LogInfo($"{PluginName} is active");
+
             SpeedometerFeature.Configure(Config);
+            SpeedometerFeature.Patch(harmony);
+
             SailingAdjustmentFeature.Configure(Config);
             SailingAdjustmentFeature.Patch(harmony);
-            SpeedometerFeature.Patch(harmony);
+
+            ShipBonkiesFeature.Configure(Config);
+            ShipBonkiesFeature.Patch(harmony);
+        }
+
+        internal void OnDestroy()
+        {
+            harmony.UnpatchSelf();
         }
 
         internal void OnGUI()

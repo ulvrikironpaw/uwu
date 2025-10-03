@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UWU
 {
-    public static class SailingAdjustmentFeature
+    static class SailingAdjustmentFeature
     {
         // The value to use for paddle backward.
         private static float BACKWARD_FORCE = 0.38f;
