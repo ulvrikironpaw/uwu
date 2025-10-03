@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UWU
 {
-    static class SailingSpeedFeature
+    static class SailFasterFeature
     {
         // The value to use for paddle backward.
         private static float BACKWARD_FORCE = 0.38f;
@@ -25,13 +25,13 @@ namespace UWU
 
         private static ConfigEntry<bool> EnablePaddleFaster;
         private static ConfigEntry<bool> EnableSailingGrace;
-        private static ConfigEntry<bool> EnableFasterBoats;
+        private static ConfigEntry<bool> EnableSailFaster;
 
         internal static void Configure(ConfigFile config)
         {
-            EnableFasterBoats = config.BindConfig(
+            EnableSailFaster = config.BindConfig(
                 section: "Sailing",
-                key: "FasterBoats",
+                key: "SailFaster",
                 defaultValue: true,
                 description: "Makes ship sail speed about 40% faster.",
                 synced: true
@@ -52,12 +52,12 @@ namespace UWU
             );
 
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
-                name: "UWUFasterBoats",
-                help: "Enables or disables the UWU.FasterBoats option",
+                name: "UWUSailFaster",
+                help: "Enables or disables the UWU.SailFaster option",
                 adminOnly: true,
                 isCheat: false,
-                () => EnableFasterBoats.Value,
-                (value) => EnableFasterBoats.Value = value
+                () => EnableSailFaster.Value,
+                (value) => EnableSailFaster.Value = value
             ));
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
                 name: "UWUPaddleFaster",
@@ -125,15 +125,15 @@ namespace UWU
         private static void ApplySailForceUpdates(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(Ship), "GetSailForce");
-            var prefix = AccessTools.Method(typeof(SailingSpeedFeature), nameof(Ship_GetSailForce_Prefix));
+            var prefix = AccessTools.Method(typeof(SailFasterFeature), nameof(Ship_GetSailForce_Prefix));
             harmony.Patch(original, prefix: new(prefix));
         }
 
         private static void ApplyHeadWindUpdates(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(Ship), nameof(Ship.CustomFixedUpdate));
-            var prefix = AccessTools.Method(typeof(SailingSpeedFeature), nameof(Ship_CustomFixedUpdate_Prefix));
-            var postfix = AccessTools.Method(typeof(SailingSpeedFeature), nameof(Ship_CustomFixedUpdate_Postfix));
+            var prefix = AccessTools.Method(typeof(SailFasterFeature), nameof(Ship_CustomFixedUpdate_Prefix));
+            var postfix = AccessTools.Method(typeof(SailFasterFeature), nameof(Ship_CustomFixedUpdate_Postfix));
             harmony.Patch(original, prefix: new(prefix), postfix: new(postfix));
         }
 
@@ -187,7 +187,7 @@ namespace UWU
 
             // Apply a coefficient to sailing speed if at full or half mast.
             // This makes the speed of the boat significantly faster.
-            if (EnableFasterBoats.Value)
+            if (EnableSailFaster.Value)
             {
                 // Get the current speed from the internal instance. This is gross.
                 var speed = Traverse.Create(__instance).Field<Ship.Speed>("m_speed").Value;
@@ -215,7 +215,7 @@ namespace UWU
 
         static void Ship_CustomFixedUpdate_Postfix(Ship __instance, Ship_CustomFixedUpdate_State __state)
         {
-            if (EnableFasterBoats.Value)
+            if (EnableSailFaster.Value)
             {
                 // Restore the original value after calculations take place.
                 __instance.m_sailForceFactor = __state.initialSailForceFactor;

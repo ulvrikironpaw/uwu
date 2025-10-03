@@ -8,9 +8,9 @@ using UnityEngine;
 
 namespace UWU
 {
-    internal class SailPinFeature
+    internal class ShipPinFeature
     {
-        private static ConfigEntry<bool> EnableSailPins;
+        private static ConfigEntry<bool> EnableShipPin;
         private static readonly Dictionary<ZDO, Minimap.PinData> SailPins = new();
         private const float scanInterval = 5f;
         private static float scanTimer = 0f;
@@ -19,28 +19,28 @@ namespace UWU
 
         internal static void Configure(ConfigFile config)
         {
-            EnableSailPins = config.BindConfig(
+            EnableShipPin = config.BindConfig(
                 section: "Sailing",
-                key: "SailPin",
+                key: "ShipPin",
                 defaultValue: true,
-                description: "Places circle map pins on the map for active sail boats and labels them",
+                description: "Tracks ships on the map",
                 synced: true
             );
 
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
-                name: "UWUSailPinFeature",
-                help: "Enables or disables the UWU.SailPin option",
+                name: "UWUShipPin",
+                help: "Enables or disables the UWU.ShipPin option",
                 adminOnly: true,
                 isCheat: false,
-                () => EnableSailPins.Value,
-                (value) => EnableSailPins.Value = value
+                () => EnableShipPin.Value,
+                (value) => EnableShipPin.Value = value
             ));
 
 
         }
         internal static void Update()
         {
-            if (!EnableSailPins.Value)
+            if (!EnableShipPin.Value)
             {
                 RemoveSailPins();
                 return;

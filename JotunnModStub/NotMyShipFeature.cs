@@ -5,41 +5,41 @@ using Jotunn.Managers;
 
 namespace UWU
 {
-    internal class ReduceShipAggressionFeature
+    internal class NotMyShipFeature
     {
 
-        private static ConfigEntry<bool> EnableReduceShipAggression;
+        private static ConfigEntry<bool> EnableNotMyShip;
 
         internal static void Configure(ConfigFile config)
         {
-            EnableReduceShipAggression = config.BindConfig(
+            EnableNotMyShip = config.BindConfig(
                 section: "Sailing",
-                key: "ReduceShipAggression",
+                key: "NotMyShip",
                 defaultValue: true,
-                description: "If enabled, aggression toward ships will be reduces while no one is aboard.",
+                description: "If enabled, aggression toward ships will be reduced while no player is aboard.",
                 synced: true
             );
 
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
-                name: "UWUReduceShipAggression",
-                help: "Enables or disables the UWU.EnableReduceSailboatAggression option",
+                name: "UWUNotMyShip",
+                help: "Enables or disables the UWU.NotMyShip option",
                 adminOnly: true,
                 isCheat: false,
-                () => EnableReduceShipAggression.Value,
-                (value) => EnableReduceShipAggression.Value = value
+                () => EnableNotMyShip.Value,
+                (value) => EnableNotMyShip.Value = value
             ));
         }
 
         internal static void Patch(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(BaseAI), nameof(BaseAI.CanSenseTarget), new[] { typeof(Character) });
-            var postfix = AccessTools.Method(typeof(ReduceShipAggressionFeature), nameof(BaseAI_CanSenseTarget_Postfix));
+            var postfix = AccessTools.Method(typeof(NotMyShipFeature), nameof(BaseAI_CanSenseTarget_Postfix));
             harmony.Patch(original, postfix: new(postfix));
         }
 
         private static void BaseAI_CanSenseTarget_Postfix(Character target, ref bool __result)
         {
-            if (!EnableReduceShipAggression.Value) return;
+            if (!EnableNotMyShip.Value) return;
 
             // Don't turn a false verdict into a true.
             // Don't return true if there is no target.

@@ -22,19 +22,19 @@ namespace UWU
             SpeedometerFeature.Configure(Config);
             SpeedometerFeature.Patch(harmony);
             // Configure and patch sailing speed adjustments
-            SailingSpeedFeature.Configure(Config);
-            SailingSpeedFeature.Patch(harmony);
+            SailFasterFeature.Configure(Config);
+            SailFasterFeature.Patch(harmony);
             // Configure and patch whether enemies are aggressive to sailboats.
-            ReduceShipAggressionFeature.Configure(Config);
-            ReduceShipAggressionFeature.Patch(harmony);
+            NotMyShipFeature.Configure(Config);
+            NotMyShipFeature.Patch(harmony);
             // Configure and patch the ability to destruct a ship with the hammer.
             ShipBonkiesFeature.Configure(Config);
             ShipBonkiesFeature.Patch(harmony);
             // Configures auto-adding map pins for ships.
-            SailPinFeature.Configure(Config);
+            ShipPinFeature.Configure(Config);
             // Configures adding permanent buffs.
-            PermanentBuffFeature.Configure(Config);
-            PermanentBuffFeature.Patch(harmony);
+            ModerBoatingFeature.Configure(Config);
+            ModerBoatingFeature.Patch(harmony);
         }
 
         internal void OnDestroy()
@@ -54,8 +54,8 @@ namespace UWU
         {
             // Call the Update() function on plugins which are have normal Unity
             // hooks.
-            PermanentBuffFeature.Update();
-            SailPinFeature.Update();
+            ModerBoatingFeature.Update();
+            ShipPinFeature.Update();
         }
     }
 }

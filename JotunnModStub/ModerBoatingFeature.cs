@@ -6,42 +6,42 @@ using UnityEngine;
 
 namespace UWU
 {
-    internal class PermanentBuffFeature
+    internal class ModerBoatingFeature
     {
-        private static ConfigEntry<bool> EnablePermanentModer;
+        private static ConfigEntry<bool> EnableModerBoating;
         private const float maxTime = 5f;
         private static float updateTimer = maxTime;
 
         internal static void Configure(ConfigFile config)
         {
-            EnablePermanentModer = config.BindConfig(
+            EnableModerBoating = config.BindConfig(
                 section: "Sailing",
-                key: "PermanentModer",
-                defaultValue: true,
+                key: "ModerBoating",
+                defaultValue: false,
                 description: "Permanently applies the Moder buff",
                 synced: true
             );
 
             CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
-                name: "UWUPermanentModer",
-                help: "Enables or disables the UWU.PermanentModer option",
+                name: "UWUModerBoating",
+                help: "Enables or disables the UWU.ModerBoating option",
                 adminOnly: true,
                 isCheat: false,
-                () => EnablePermanentModer.Value,
-                (value) => EnablePermanentModer.Value = value
+                () => EnableModerBoating.Value,
+                (value) => EnableModerBoating.Value = value
             ));
         }
 
         internal static void Patch(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(StatusEffect), nameof(StatusEffect.Setup));
-            var prefix = AccessTools.Method(typeof(PermanentBuffFeature), nameof(StatusEffect_Setup_Prefix));
+            var prefix = AccessTools.Method(typeof(ModerBoatingFeature), nameof(StatusEffect_Setup_Prefix));
             harmony.Patch(original, prefix: new(prefix));
         }
 
         internal static void Update()
         {
-            if (!EnablePermanentModer.Value)
+            if (!EnableModerBoating.Value)
             {
                 // Cancel when disabled.
                 return;
