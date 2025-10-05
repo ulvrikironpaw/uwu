@@ -1,57 +1,39 @@
-﻿using BepInEx.Configuration;
-using HarmonyLib;
-using Jotunn.Extensions;
-using Jotunn.Managers;
+﻿using HarmonyLib;
 using UnityEngine;
+using UWU.Common;
 
-namespace UWU
+namespace UWU.Features
 {
-    static class ShipBonkiesFeature
+    internal sealed class ShipBonkiesFeature : UWUFeature
     {
-        private static ConfigEntry<bool> EnableShipBonkies;
+        private static ShipBonkiesFeature instance;
 
-        internal static void Configure(ConfigFile config)
+        internal override string Name => "ShipBonkies";
+        protected override string Category => "Sailing";
+        protected override string Description => "Hammer destructs ships for full refund when no player is aboard";
+
+        internal ShipBonkiesFeature()
         {
-            EnableShipBonkies = config.BindConfig(
-                section: "Sailing",
-                key: "ShipBonkies",
-                defaultValue: true,
-                description: "If enabled, Hammer destructs ships for a full refund when no player is aboard",
-                synced: true
-            );
-
-            CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
-                name: "UWUShipBonkies",
-                help: "Enables or disables the UWU.ShipBonkies option",
-                adminOnly: true,
-                isCheat: false,
-                () => EnableShipBonkies.Value,
-                (value) => EnableShipBonkies.Value = value
-            ));
+            instance = this;
         }
 
-        internal static void Patch(Harmony harmony)
-        {
-            PatchPlayerRemovePiece(harmony);
-        }
-
-        private static void PatchPlayerRemovePiece(Harmony harmony)
+        protected override void OnPatch(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(Player), "RemovePiece");
             var prefix = AccessTools.Method(typeof(ShipBonkiesFeature), nameof(Player_RemovePiece_Prefix));
             harmony.Patch(original, prefix: new(prefix));
         }
 
-        static bool Player_RemovePiece_Prefix(ref bool __result)
+        private static bool Player_RemovePiece_Prefix(ref bool __result)
         {
-            if (!EnableShipBonkies.Value) return true;
+            if (!instance.Enabled.Value) return true;
 
             var localPlayer = Player.m_localPlayer;
             if (localPlayer == null) return true;
 
             // Only raycast vehicles and character triggers. This keeps the raycast
             // from accidentally finding water volume, etc.
-            var layerMask = (1 << (int)ValheimLayer.CharacterTrigger) | (1 << (int)ValheimLayer.Vehicle);
+            var layerMask = 1 << (int)ValheimLayer.CharacterTrigger | 1 << (int)ValheimLayer.Vehicle;
             var hasHit = Physics.Raycast(
                 GameCamera.instance.transform.position,
                 GameCamera.instance.transform.forward,

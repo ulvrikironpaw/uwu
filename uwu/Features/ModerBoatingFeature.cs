@@ -1,51 +1,35 @@
-﻿using BepInEx.Configuration;
-using HarmonyLib;
-using Jotunn.Extensions;
-using Jotunn.Managers;
+﻿using HarmonyLib;
 using UnityEngine;
+using UWU.Common;
 
-namespace UWU
+namespace UWU.Features
 {
-    internal class ModerBoatingFeature
+    internal sealed class ModerBoatingFeature : UWUFeature
     {
-        private static ConfigEntry<bool> EnableModerBoating;
+        private static ModerBoatingFeature instance;
+
+        internal override string Name => "ModerBoating";
+        protected override string Category => "Sailing";
+        protected override string Description => "Permanently applies the Moder buff";
+
         private const float maxTime = 5f;
-        private static float updateTimer = maxTime;
+        private float updateTimer = maxTime;
 
-        internal static void Configure(ConfigFile config)
+        internal ModerBoatingFeature()
         {
-            EnableModerBoating = config.BindConfig(
-                section: "Sailing",
-                key: "ModerBoating",
-                defaultValue: false,
-                description: "Permanently applies the Moder buff",
-                synced: true
-            );
-
-            CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
-                name: "UWUModerBoating",
-                help: "Enables or disables the UWU.ModerBoating option",
-                adminOnly: true,
-                isCheat: false,
-                () => EnableModerBoating.Value,
-                (value) => EnableModerBoating.Value = value
-            ));
+            instance = this;
         }
 
-        internal static void Patch(Harmony harmony)
+        protected override void OnPatch(Harmony harmony)
         {
             var original = AccessTools.Method(typeof(StatusEffect), nameof(StatusEffect.Setup));
             var prefix = AccessTools.Method(typeof(ModerBoatingFeature), nameof(StatusEffect_Setup_Prefix));
             harmony.Patch(original, prefix: new(prefix));
         }
 
-        internal static void Update()
+        protected override void OnUpdate()
         {
-            if (!EnableModerBoating.Value)
-            {
-                // Cancel when disabled.
-                return;
-            }
+            if (!Enabled.Value) return;
 
             // Check every 60 seconds
             updateTimer += Time.deltaTime;

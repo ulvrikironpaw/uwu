@@ -1,61 +1,67 @@
 ﻿using BepInEx;
-using HarmonyLib;
 using Jotunn.Utils;
+using UWU.Common;
+using UWU.Features;
 
 namespace UWU
 {
-    [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
+    [BepInPlugin(Manifest.PluginGUID, Manifest.PluginName, Manifest.PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class UWUMod : BaseUnityPlugin
     {
-        public const string PluginGUID = "com.ulvrikironpaw.uwu";
-        public const string PluginName = "Ulvrik's World Update";
-        public const string PluginVersion = "0.0.1";
-
-        private readonly Harmony harmony = new(PluginGUID);
+        private UWUFeature[] features = new UWUFeature[0];
 
         internal void Awake()
         {
-            Jotunn.Logger.LogInfo($"{PluginName} is active");
-            // Configure and patch speedometer.
-            SpeedometerFeature.Configure(Config);
-            SpeedometerFeature.Patch(harmony);
-            // Configure and patch sailing speed adjustments
-            SailFasterFeature.Configure(Config);
-            SailFasterFeature.Patch(harmony);
-            // Configure and patch whether enemies are aggressive to sailboats.
-            NotMyShipFeature.Configure(Config);
-            NotMyShipFeature.Patch(harmony);
-            // Configure and patch the ability to destruct a ship with the hammer.
-            ShipBonkiesFeature.Configure(Config);
-            ShipBonkiesFeature.Patch(harmony);
-            // Configures auto-adding map pins for ships.
-            ShipPinFeature.Configure(Config);
-            // Configures adding permanent buffs.
-            ModerBoatingFeature.Configure(Config);
-            ModerBoatingFeature.Patch(harmony);
+            Jotunn.Logger.LogInfo($"{Manifest.PluginName} is active");
+
+            features = new UWUFeature[]
+            {
+                new SpeedometerFeature(),
+                new SailFasterFeature(),
+                new PaddleFasterFeature(),
+                new SailingGraceFeature(),
+                new NotMyShipFeature(),
+                new ShipBonkiesFeature(),
+                new ShipPinFeature(),
+                new ModerBoatingFeature(),
+            };
+
+            foreach (var feature in features)
+            {
+                feature.Configure(Config);
+            }
+            foreach (var feature in features)
+            {
+                feature.Patch();
+            }
         }
 
-        internal void OnDestroy()
+        internal void Update()
         {
-            // Removes harmony patches.
-            harmony.UnpatchSelf();
+            foreach (var feature in features)
+            {
+                feature.Update();
+            }
         }
 
         internal void OnGUI()
         {
             if (Hud.IsUserHidden()) return;
-            // Draw the speedometer if necessary.
-            SpeedometerFeature.OnGUI();
+
+            foreach (var feature in features)
+            {
+                feature.UpdateGUI();
+            }
         }
 
-        internal void Update()
+        internal void OnDestroy()
         {
-            // Call the Update() function on plugins which are have normal Unity
-            // hooks.
-            ModerBoatingFeature.Update();
-            ShipPinFeature.Update();
+            foreach (var feature in features)
+            {
+                feature.Unpatch();
+            }
         }
     }
 }

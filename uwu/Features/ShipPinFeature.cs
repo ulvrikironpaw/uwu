@@ -1,46 +1,26 @@
-﻿using BepInEx.Configuration;
-using HarmonyLib;
-using Jotunn.Extensions;
-using Jotunn.Managers;
+﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UWU.Common;
 
-namespace UWU
+namespace UWU.Features
 {
-    internal class ShipPinFeature
+    internal sealed class ShipPinFeature : UWUFeature
     {
-        private static ConfigEntry<bool> EnableShipPin;
-        private static readonly Dictionary<ZDO, Minimap.PinData> SailPins = new();
+        internal override string Name => "ShipPin";
+        protected override string Category => "Sailing";
+        protected override string Description => "Tracks ships on the map";
+
         private const float scanInterval = 5f;
-        private static float scanTimer = 0f;
         private const float updateInterval = 0.5f;
-        private static float updateTimer = 0f;
+        private readonly Dictionary<ZDO, Minimap.PinData> SailPins = new();
+        private float scanTimer = 0f;
+        private float updateTimer = 0f;
 
-        internal static void Configure(ConfigFile config)
+        protected override void OnUpdate()
         {
-            EnableShipPin = config.BindConfig(
-                section: "Sailing",
-                key: "ShipPin",
-                defaultValue: true,
-                description: "Tracks ships on the map",
-                synced: true
-            );
-
-            CommandManager.Instance.AddConsoleCommand(new BoolConsoleCommand(
-                name: "UWUShipPin",
-                help: "Enables or disables the UWU.ShipPin option",
-                adminOnly: true,
-                isCheat: false,
-                () => EnableShipPin.Value,
-                (value) => EnableShipPin.Value = value
-            ));
-
-
-        }
-        internal static void Update()
-        {
-            if (!EnableShipPin.Value)
+            if (!Enabled.Value)
             {
                 RemoveSailPins();
                 return;
@@ -67,7 +47,7 @@ namespace UWU
             }
         }
 
-        private static void RemoveSailPins()
+        private void RemoveSailPins()
         {
             foreach (var value in SailPins.Values)
             {
@@ -76,7 +56,7 @@ namespace UWU
             SailPins.Clear();
         }
 
-        private static void ScanShips()
+        private void ScanShips()
         {
             var allShips = GetAllShips();
             // Add all ships that are new from the scan.
@@ -109,7 +89,7 @@ namespace UWU
             }
         }
 
-        private static void UpdateSailPins()
+        private void UpdateSailPins()
         {
             // Find all ships and update/add pins
             foreach (var kvp in SailPins)
@@ -119,7 +99,7 @@ namespace UWU
             }
         }
 
-        private static List<ZDO> GetAllShips()
+        private List<ZDO> GetAllShips()
         {
             var objects = Traverse.Create(ZDOMan.instance).Field("m_objectsByID").GetValue() as Dictionary<ZDOID, ZDO>;
             if (objects == null)

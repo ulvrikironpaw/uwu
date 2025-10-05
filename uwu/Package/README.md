@@ -58,6 +58,4 @@ Please file an issue on Github. Features that duplicate functionality in Marsara
 
 The initial release contains ModerBoating, NotMyShip, PaddleFaster, SailingGrace, ShipBonkies, ShipPin, and Speedometer.
 
-## Known issues
 
-You can find the github at: https://github.com/ulvrikironpaw/uwu
