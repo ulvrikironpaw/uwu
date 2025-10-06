@@ -14,27 +14,23 @@ namespace UWU
 
         internal void Awake()
         {
-            Jotunn.Logger.LogInfo($"{Manifest.PluginName} is active");
+            Jotunn.Logger.LogInfo($"{Manifest.PluginName} is alive");
 
             features = new UWUFeature[]
             {
-                new SpeedometerFeature(),
-                new SailFasterFeature(),
-                new PaddleFasterFeature(),
-                new SailingGraceFeature(),
+                new ModerBoatingFeature(),
                 new NotMyShipFeature(),
+                new PaddleFasterFeature(),
+                new SailFasterFeature(),
+                new SailingGraceFeature(),
                 new ShipBonkiesFeature(),
                 new ShipPinFeature(),
-                new ModerBoatingFeature(),
+                new SpeedometerFeature(),
             };
 
             foreach (var feature in features)
             {
                 feature.Configure(Config);
-            }
-            foreach (var feature in features)
-            {
-                feature.Patch();
             }
         }
 
@@ -43,6 +39,14 @@ namespace UWU
             foreach (var feature in features)
             {
                 feature.Update();
+            }
+        }
+
+        internal void LateUpdate()
+        {
+            foreach (var feature in features)
+            {
+                feature.LateUpdate();
             }
         }
 
@@ -60,7 +64,7 @@ namespace UWU
         {
             foreach (var feature in features)
             {
-                feature.Unpatch();
+                feature.Destroy();
             }
         }
     }

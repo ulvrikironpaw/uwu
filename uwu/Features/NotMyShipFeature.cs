@@ -5,16 +5,9 @@ namespace UWU.Features
 {
     internal sealed class NotMyShipFeature : UWUFeature
     {
-        private static NotMyShipFeature instance;
-
         internal override string Name => "NotMyShip";
         protected override string Category => "Sailing";
         protected override string Description => "Aggression toward ships will be reduced while no player is aboard";
-
-        internal NotMyShipFeature()
-        {
-            instance = this;
-        }
 
         protected override void OnPatch(Harmony harmony)
         {
@@ -25,8 +18,6 @@ namespace UWU.Features
 
         private static void BaseAI_CanSenseTarget_Postfix(Character target, ref bool __result)
         {
-            if (!instance.Enabled.Value) return;
-
             // Don't turn a false verdict into a true.
             // Don't return true if there is no target.
             if (!__result || target == null) return;

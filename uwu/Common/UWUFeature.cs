@@ -16,6 +16,8 @@ namespace UWU.Common
 
         private readonly Harmony harmony;
 
+        private bool wasEnabled = false;
+
         protected UWUFeature()
         {
             harmony = new Harmony($"{Manifest.PluginGUID}.{Name.ToLower()}");
@@ -32,6 +34,7 @@ namespace UWU.Common
 
         protected virtual void OnUpdate() { }
 
+        protected virtual void OnDestroy() { }
 
         internal void Configure(ConfigFile config)
         {
@@ -42,6 +45,7 @@ namespace UWU.Common
                 description: Description,
                 synced: Synced
             );
+            wasEnabled = true;
 
             CommandManager.Instance.AddConsoleCommand(new BoolCommand(
                 name: $"UWU{Name}",
@@ -53,30 +57,57 @@ namespace UWU.Common
             ));
 
             OnConfigure(config);
+            if (Enabled.Value)
+            {
+                Patch();
+            }
             Jotunn.Logger.LogInfo($"{harmony.Id} is configured");
         }
 
         internal void Update()
         {
+            if (!Enabled.Value) return;
             OnUpdate();
+        }
+
+        internal void LateUpdate()
+        {
+            // Don't fix patches if the enablement hasn't changed.
+            if (Enabled.Value == wasEnabled) return;
+
+            // Update the was enabled value so it can be used for change detection.
+            Jotunn.Logger.LogInfo($"{harmony.Id} enablement changed {wasEnabled} -> {Enabled.Value}");
+            wasEnabled = Enabled.Value;
+            if (Enabled.Value) Patch();
+            else Unpatch();
         }
 
         internal void UpdateGUI()
         {
+            if (!Enabled.Value) return;
+
             OnGUI();
         }
 
-        internal void Patch()
+        internal void Destroy()
         {
+            Unpatch();
+            OnDestroy();
+        }
+
+        private void Patch()
+        {
+            // Defensive unpatch if necessary.
             OnPatch(harmony);
             Jotunn.Logger.LogInfo($"{harmony.Id} is patched");
         }
 
-        internal void Unpatch()
+        private void Unpatch()
         {
             harmony.UnpatchSelf();
             OnUnpatch();
             Jotunn.Logger.LogInfo($"{harmony.Id} is unpatched");
         }
+
     }
 }

@@ -57,29 +57,23 @@ namespace UWU.Features
             // This is how different ships with different sale force factors are handled.
             __state = new Ship_CustomFixedUpdate_State { initialSailForceFactor = __instance.m_sailForceFactor };
 
+            // Get the current speed from the internal instance.
+            var speed = Traverse.Create(__instance).Field<Ship.Speed>("m_speed").Value;
+            Jotunn.Logger.LogFatal($"Sail force: {__instance.m_sailForceFactor}");
 
-            // Apply a coefficient to sailing speed if at full or half mast.
-            // This makes the speed of the boat significantly faster.
-            if (instance.Enabled.Value)
+            // Apply the new sailing speed based on the current speed.
+            __instance.m_sailForceFactor *= speed switch
             {
-                // Get the current speed from the internal instance. This is gross.
-                var speed = Traverse.Create(__instance).Field<Ship.Speed>("m_speed").Value;
-                __instance.m_sailForceFactor *= speed switch
-                {
-                    Ship.Speed.Full => instance.MAST_COEFFICIENT_FULL,
-                    Ship.Speed.Half => instance.MAST_COEFFICIENT_HALF,
-                    _ => MAST_COEFFICIENT_DEFAULT,
-                };
-            }
+                Ship.Speed.Full => instance.MAST_COEFFICIENT_FULL,
+                Ship.Speed.Half => instance.MAST_COEFFICIENT_HALF,
+                _ => MAST_COEFFICIENT_DEFAULT,
+            };
         }
 
         private static void Ship_CustomFixedUpdate_Postfix(Ship __instance, Ship_CustomFixedUpdate_State __state)
         {
-            if (instance.Enabled.Value)
-            {
-                // Restore the original value after calculations take place.
-                __instance.m_sailForceFactor = __state.initialSailForceFactor;
-            }
+            // Restore the original value after calculations take place.
+            __instance.m_sailForceFactor = __state.initialSailForceFactor;
         }
 
         /// <summary>

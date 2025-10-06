@@ -15,9 +15,9 @@ namespace UWU.Features
         protected override string Description => "Significantly reduces the penalty for headwinds";
 
         // The denominator used to reduce the speed when on the edges of a headwind.
-        private float HEADWIND_REDUCTION_FACTOR_MIN = 5.8f;
+        private float headwindReductionMin = 5.8f;
         // The denominator used to reduce the speed when in a headwind.
-        private float HEADWIND_REDUCTION_FACTOR_MAX = 7.2f;
+        private float headwindReductionMax = 7.2f;
 
         internal SailingGraceFeature()
         {
@@ -31,15 +31,15 @@ namespace UWU.Features
                 help: "For debugging, the factor to reduce speed when at the minimum headwind",
                 adminOnly: true,
                 isCheat: true,
-                () => HEADWIND_REDUCTION_FACTOR_MIN,
-                (value) => HEADWIND_REDUCTION_FACTOR_MIN = value));
+                () => headwindReductionMin,
+                (value) => headwindReductionMin = value));
             CommandManager.Instance.AddConsoleCommand(new FloatCommand(
                 name: "UWUHWRMax",
                 help: "For debugging, the factor to reduce speed when at the maximum headwind",
                 adminOnly: true,
                 isCheat: true,
-                () => HEADWIND_REDUCTION_FACTOR_MAX,
-                (value) => HEADWIND_REDUCTION_FACTOR_MAX = value));
+                () => headwindReductionMax,
+                (value) => headwindReductionMax = value));
         }
 
         protected override void OnPatch(Harmony harmony)
@@ -51,11 +51,6 @@ namespace UWU.Features
 
         private static bool Ship_GetSailForce_Prefix(Ship __instance, float sailSize, ref Vector3 __result)
         {
-            if (!instance.Enabled.Value)
-            {
-                return true;
-            }
-
             // Grab the relative angle of the wind to the boat and the wind direction.
             Vector3 windDir = EnvMan.instance.GetWindDir();
             float angle = Vector3.Angle(windDir, __instance.transform.forward);
@@ -67,7 +62,7 @@ namespace UWU.Features
                 // to be accurate to sailing.
                 float offset = Mathf.Abs(angle - 180f);
                 float percentile = offset / 45f;
-                float factor = Mathf.Lerp(instance.HEADWIND_REDUCTION_FACTOR_MAX, instance.HEADWIND_REDUCTION_FACTOR_MIN, percentile);
+                float factor = Mathf.Lerp(instance.headwindReductionMax, instance.headwindReductionMin, percentile);
                 target = Vector3.Normalize(__instance.transform.forward) * (__instance.m_sailForceFactor * sailSize / factor);
             }
             else
@@ -77,6 +72,7 @@ namespace UWU.Features
                 float windAngleFactor = __instance.GetWindAngleFactor() * windIntensity;
                 target = Vector3.Normalize(windDir + __instance.transform.forward) * (windAngleFactor * __instance.m_sailForceFactor * sailSize);
             }
+
             // Create traversers to set/get private fields.
             var traverser = Traverse.Create(__instance);
             var sailForceField = traverser.Field<Vector3>("m_sailForce");
@@ -88,6 +84,7 @@ namespace UWU.Features
             windChangeVelocityField.Value = windChangeVelocity;
             sailForceField.Value = sailForce;
             __result = sailForce;
+
             return false;
         }
     }

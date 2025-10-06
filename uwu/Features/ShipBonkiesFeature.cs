@@ -6,16 +6,9 @@ namespace UWU.Features
 {
     internal sealed class ShipBonkiesFeature : UWUFeature
     {
-        private static ShipBonkiesFeature instance;
-
         internal override string Name => "ShipBonkies";
         protected override string Category => "Sailing";
         protected override string Description => "Hammer destructs ships for full refund when no player is aboard";
-
-        internal ShipBonkiesFeature()
-        {
-            instance = this;
-        }
 
         protected override void OnPatch(Harmony harmony)
         {
@@ -26,8 +19,11 @@ namespace UWU.Features
 
         private static bool Player_RemovePiece_Prefix(ref bool __result)
         {
-            if (!instance.Enabled.Value) return true;
+            // Short circuit when the result is already true, no need to run this
+            // if the piece is already removed.
+            if (__result == true) return true;
 
+            // Return if the player isn't assigned.
             var localPlayer = Player.m_localPlayer;
             if (localPlayer == null) return true;
 
@@ -43,6 +39,7 @@ namespace UWU.Features
             );
             // Return to the original method if no target was found.
             if (!hasHit) return true;
+
             // Check if the hit object has a Ship component in its hierarchy
             Ship ship = raycastHit.collider.GetComponentInParent<Ship>();
             if (ship == null) return true;

@@ -20,22 +20,13 @@ namespace UWU.Features
 
         protected override void OnUpdate()
         {
-            if (!Enabled.Value)
-            {
-                RemoveSailPins();
-                return;
-            }
-
-            if (Minimap.instance == null)
-            {
-                return;
-            }
+            if (Minimap.instance == null) return;
 
             scanTimer += Time.deltaTime;
             if (scanTimer >= scanInterval)
             {
                 scanTimer = 0f;
-                ScanShips();
+                RescanShips();
             }
 
             updateTimer += Time.deltaTime;
@@ -47,6 +38,11 @@ namespace UWU.Features
             }
         }
 
+        protected override void OnUnpatch()
+        {
+            RemoveSailPins();
+        }
+
         private void RemoveSailPins()
         {
             foreach (var value in SailPins.Values)
@@ -56,7 +52,7 @@ namespace UWU.Features
             SailPins.Clear();
         }
 
-        private void ScanShips()
+        private void RescanShips()
         {
             var allShips = GetAllShips();
             // Add all ships that are new from the scan.
@@ -65,7 +61,9 @@ namespace UWU.Features
                 if (!SailPins.ContainsKey(ship))
                 {
                     // Add a pin for new ships
-                    var displayName = GetShipDisplayName(ship);
+                    var prefab = ship.GetPrefab();
+                    string prefabName = ZNetScene.instance.GetPrefab(prefab)?.name ?? "";
+                    var displayName = GetShipDisplayName(prefabName);
                     var pin = Minimap.instance.AddPin(
                         ship.GetPosition(),
                         Minimap.PinType.Icon3,
@@ -99,7 +97,7 @@ namespace UWU.Features
             }
         }
 
-        private List<ZDO> GetAllShips()
+        private static List<ZDO> GetAllShips()
         {
             var objects = Traverse.Create(ZDOMan.instance).Field("m_objectsByID").GetValue() as Dictionary<ZDOID, ZDO>;
             if (objects == null)
@@ -111,29 +109,35 @@ namespace UWU.Features
             var ships = new List<ZDO>();
             foreach (var zdo in objects.Values)
             {
-                var displayName = GetShipDisplayName(zdo);
-                if (displayName == "Karve" ||
-                    displayName == "Raft" ||
-                    displayName == "Longship" ||
-                    displayName == "Drakkar")
+                int prefab = zdo.GetPrefab();
+                if (prefab == 0) continue;
+
+                string prefabName = ZNetScene.instance.GetPrefab(prefab)?.name ?? "";
+                var displayName = GetShipDisplayName(prefabName);
+
+                if (displayName != "Karve" &&
+                    displayName != "Raft" &&
+                    displayName != "Longship" &&
+                    displayName != "Drakkar")
                 {
-                    if (zdo.GetPrefab() != 0 && (destroyedList == null || !destroyedList.Contains(zdo.m_uid)))
-                    {
-                        ships.Add(zdo);
-                    }
+                    continue;
                 }
+                if (destroyedList != null && destroyedList.Contains(zdo.m_uid))
+                {
+                    continue;
+                }
+
+                ships.Add(zdo);
             }
             return ships;
         }
 
-        private static string GetShipDisplayName(ZDO zdo)
+        private static string GetShipDisplayName(string prefabName)
         {
-            int prefab = zdo.GetPrefab();
-            string prefabName = ZNetScene.instance.GetPrefab(prefab)?.name;
             return prefabName.ToLower() switch
             {
                 "vikingship" => "Longship",
-                "shipdrakkar" => "Drakkar",
+                "vikingship_ashlands" => "Drakkar",
                 _ => prefabName,
             };
         }

@@ -18,11 +18,6 @@ namespace UWU.Features
 
         protected override void OnGUI()
         {
-            if (!Enabled.Value)
-            {
-                return;
-            }
-
             // Define the style for our label's text.
             GUIStyle style = new()
             {

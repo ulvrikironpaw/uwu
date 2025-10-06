@@ -6,8 +6,6 @@ namespace UWU.Features
 {
     internal sealed class ModerBoatingFeature : UWUFeature
     {
-        private static ModerBoatingFeature instance;
-
         internal override string Name => "ModerBoating";
         protected override string Category => "Sailing";
         protected override string Description => "Permanently applies the Moder buff";
@@ -15,10 +13,7 @@ namespace UWU.Features
         private const float maxTime = 5f;
         private float updateTimer = maxTime;
 
-        internal ModerBoatingFeature()
-        {
-            instance = this;
-        }
+        private StatusEffect modifiedModerEffect;
 
         protected override void OnPatch(Harmony harmony)
         {
@@ -29,8 +24,6 @@ namespace UWU.Features
 
         protected override void OnUpdate()
         {
-            if (!Enabled.Value) return;
-
             // Check every 60 seconds
             updateTimer += Time.deltaTime;
             if (updateTimer < maxTime) return;
@@ -38,26 +31,31 @@ namespace UWU.Features
 
             // In the event a local player doesn't exist, short circuit.
             var player = Player.m_localPlayer;
-            if (player == null)
-            {
-                return;
-            }
+            if (player == null) return;
 
             // Get Status Effect Manager.
             var seMan = player.GetSEMan();
-            if (seMan == null)
-            {
-                return;
-            }
+            if (seMan == null) return;
+
             // Get the Moder guardian power status effect
             var moderEffect = ObjectDB.instance.GetStatusEffect("GP_Moder".GetHashCode());
             if (moderEffect != null && !seMan.HaveStatusEffect("GP_Moder".GetHashCode()))
             {
-                StatusEffect modifiedModerEffect = moderEffect.Clone();
-                modifiedModerEffect.m_ttl = 0; // never expires
+                modifiedModerEffect = moderEffect.Clone();
+                modifiedModerEffect.m_ttl = 0;
                 modifiedModerEffect.m_isNew = false;
                 seMan.AddStatusEffect(modifiedModerEffect, false);
             }
+        }
+
+        protected override void OnUnpatch()
+        {
+            var player = Player.m_localPlayer;
+            var seMan = player.GetSEMan();
+            if (seMan == null) return;
+
+            // Try to remove Moder effect if possible.
+            seMan.RemoveStatusEffect(modifiedModerEffect, false);
         }
 
         private static bool StatusEffect_Setup_Prefix(StatusEffect __instance, Character character)
