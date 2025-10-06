@@ -9,6 +9,7 @@ namespace UWU.Features
         internal override string Name => "ModerBoating";
         protected override string Category => "Sailing";
         protected override string Description => "Permanently applies the Moder buff";
+        protected override bool EnabledByDefault => false;
 
         private const float maxTime = 5f;
         private float updateTimer = maxTime;
@@ -50,7 +51,10 @@ namespace UWU.Features
 
         protected override void OnUnpatch()
         {
+            // Prevent null pointer exception if this is called before the player is set.
             var player = Player.m_localPlayer;
+            if (player == null) return;
+
             var seMan = player.GetSEMan();
             if (seMan == null) return;
 

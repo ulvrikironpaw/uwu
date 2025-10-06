@@ -21,7 +21,7 @@ namespace UWU.Common
         protected UWUFeature()
         {
             harmony = new Harmony($"{Manifest.PluginGUID}.{Name.ToLower()}");
-            Jotunn.Logger.LogInfo($"{harmony.Id} is instantiated");
+            Jotunn.Logger.LogDebug($"{harmony.Id} is instantiated");
         }
 
         protected virtual void OnConfigure(ConfigFile config) { }

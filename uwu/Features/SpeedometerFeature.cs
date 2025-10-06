@@ -8,6 +8,7 @@ namespace UWU.Features
         internal override string Name => "Speedometer";
         protected override string Category => "Sailing";
         protected override string Description => "If enabled, a speedometer will appear on the screen";
+        protected override bool EnabledByDefault => false;
 
         private const float maxTime = 0.25f;
 

@@ -18,7 +18,7 @@ All features are toggleable in the configuration file, but can also be enabled/d
 
 1. ModerBoating
 
-    Permanently applies the Modor buff. Default is false.
+    Permanently applies the Moder buff. Default is false.
 
 2. NotMyShip
 
