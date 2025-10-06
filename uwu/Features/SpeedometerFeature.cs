@@ -27,7 +27,7 @@ namespace UWU.Features
             style.normal.textColor = Color.white; // White text
 
             // We also change the unit depending on whether the player is on a ship or not.
-            string speedText = $"{Mathf.Floor(currentSpeed)} m/s";
+            string speedText = $"{currentSpeed:F1} m/s";
 
             // This will place it 10 pixels from the top and 10 from the left.
             Rect labelRect = new(10, 10, 144, 40);

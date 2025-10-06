@@ -11,14 +11,14 @@ namespace UWU.Features
 
         internal override string Name => "SailFaster";
         protected override string Category => "Sailing";
-        protected override string Description => "Makes ship sail speed about 40% faster.";
+        protected override string Description => "Makes ship sail speed about 75% faster.";
 
         // The default value of full force.
         private const float MAST_COEFFICIENT_DEFAULT = 1f;
         // The full force when at half mast. This is higher so there is a curve.
-        private float MAST_COEFFICIENT_HALF = 1.8f;
+        private float MAST_COEFFICIENT_HALF = 1.1f;
         // The full force when at full mast. This is lower so there is a curve.
-        private float MAST_COEFFICIENT_FULL = 1.6f;
+        private float MAST_COEFFICIENT_FULL = 1.2f;
 
         internal SailFasterFeature()
         {
@@ -59,10 +59,9 @@ namespace UWU.Features
 
             // Get the current speed from the internal instance.
             var speed = Traverse.Create(__instance).Field<Ship.Speed>("m_speed").Value;
-            Jotunn.Logger.LogFatal($"Sail force: {__instance.m_sailForceFactor}");
 
             // Apply the new sailing speed based on the current speed.
-            __instance.m_sailForceFactor *= speed switch
+            __instance.m_sailForceFactor = (__instance.m_sailForceFactor * 1.8f) * speed switch
             {
                 Ship.Speed.Full => instance.MAST_COEFFICIENT_FULL,
                 Ship.Speed.Half => instance.MAST_COEFFICIENT_HALF,
