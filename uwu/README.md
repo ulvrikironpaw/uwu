@@ -4,7 +4,7 @@ QoL Valheim mod that focuses on improvements to sailing and exploration for mult
 
 ## About
 
-This mod was created as a supplementary mod to MarsarahTweaks and PlantEverything and focuses on QoL changes for exploration and sailing in multiplayer.
+This mod focuses on QoL changes for exploration and sailing in multiplayer.
 
 ## Installation (manual)
 
@@ -50,7 +50,7 @@ All features are toggleable in the configuration file, but can also be enabled/d
 
 ## Feature Requests
 
-Please file an issue on Github. Features that duplicate functionality in MarsarahTweaks or PlantEverything will not be considered because this is intended to be compatible with those two mods. Please limit feature requests to QoL changes in exploration and sailing.
+Please file an issue on Github. Please limit feature requests to QoL changes in exploration.
 
 ## Changelog
 
