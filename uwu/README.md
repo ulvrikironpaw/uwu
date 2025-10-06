@@ -1,4 +1,4 @@
-﻿# Ulvrik's World Update
+# Ulvrik's World Update
 
 QoL Valheim mod that focuses on improvements to sailing and exploration for multiplayer.
 
@@ -57,5 +57,3 @@ Please file an issue on Github. Please limit feature requests to QoL changes in 
 ### 0.0.1
 
 The initial release contains ModerBoating, NotMyShip, PaddleFaster, SailingGrace, ShipBonkies, ShipPin, and Speedometer.
-
-
