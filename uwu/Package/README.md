@@ -54,6 +54,11 @@ Please file an issue on Github. Please limit feature requests to QoL changes in 
 
 ## Changelog
 
+### 0.0.2
+
+- Fix null pointer when local player is not yet assigned in ModerBoating. This probably didn't affect gameplay, but removed the error none-the-less
+- Updated readme and default options
+
 ### 0.0.1
 
 The initial release contains ModerBoating, NotMyShip, PaddleFaster, SailingGrace, ShipBonkies, ShipPin, and Speedometer.
