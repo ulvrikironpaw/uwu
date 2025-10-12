@@ -73,7 +73,7 @@ namespace UWU.Common
         /// </summary>
         internal static string GetLabelFromZDO(ZDO zdo)
         {
-            var uwuName = zdo.GetString(Constants.CUSTOM_LABEL_PROPERTY, "");
+            var uwuName = GetCustomLabelFromZDO(zdo);
             if (!string.IsNullOrWhiteSpace(uwuName)) return uwuName;
 
             var prefab = zdo.GetPrefab();
@@ -82,6 +82,12 @@ namespace UWU.Common
             string prefabName = ZNetScene.instance.GetPrefab(prefab)?.name ?? "";
             return GetLabelFromPrefab(prefabName);
         }
+
+        /// <summary>
+        /// Returns the display name.
+        /// </summary>
+        internal static string GetCustomLabelFromZDO(ZDO zdo)
+            => zdo.GetString(Constants.CUSTOM_LABEL_PROPERTY, "") ?? "";
 
         /// <summary>
         /// Returns the display name.

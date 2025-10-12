@@ -22,16 +22,17 @@ namespace UWU
 
                 features = new UWUFeature[]
                 {
+                    new BoatyMcBoatfaceFeature(),
                     new ModerBoatingFeature(),
                     new NotMyShipFeature(),
                     new PaddleFasterFeature(),
                     new SailFasterFeature(),
                     new SailingGraceFeature(),
                     new ShipBonkiesFeature(),
-                    new ShipPinFeature(),
-                    new SpeedometerFeature(),
                     new ShipNameplateFeature(),
-                    new BoatyMcBoatfaceFeature(),
+                    new ShipPinFeature(),
+                    new ShipRenameFeature(),
+                    new SpeedometerFeature(),
                 };
 
                 foreach (var feature in features)
