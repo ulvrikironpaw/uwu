@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using Jotunn.Extensions;
 using System;
 using UWU.Common;
 
@@ -7,34 +8,6 @@ namespace UWU.Features
 {
   internal class BoatyMcBoatfaceFeature : UWUFeature
   {
-
-    private static readonly string[] Prefixes = new string[]
-    {
-      "Axe", "Bear", "Wolf", "Ice", "Blood", "Storm",
-      "Iron", "Frost", "Fire", "Bone", "Steel", "Ghost",
-      "Odin", "Thor", "Rune", "Skull", "Night", "Shadow",
-      "Grim", "Rage", "Wind", "Snow", "Drake", "Black",
-      "Red", "Deep", "Long", "Dark", "Bright", "Rock",
-      "Sea", "Stone", "Ash", "Silent", "Thunder", "Sun",
-      "Moon", "Wild", "True", "Strong", "Old", "Young",
-      "Swift", "Brave", "Mighty", "Hard", "Cold", "Glory",
-      "Moon"
-    };
-
-    private static readonly string[] Suffixes = new string[]
-    {
-      "breaker", "singer", "walker", "runner", "seeker", "howler",
-      "slayer", "hunter", "rider", "smasher", "warrior", "sailor",
-      "weaver", "caller", "watcher", "shaper", "eater", "guard",
-      "drinker", "burner", "binder", "reader", "forger", "smith",
-      "storm", "fang", "helm", "eye", "blade", "horn",
-      "shield", "maw", "claw", "voice", "shade", "soul",
-      "beard", "friend", "foe", "hand", "foot", "heart",
-      "mark", "blood", "rage", "song", "spell", "roar",
-      "moon"
-    };
-
-
     private static BoatyMcBoatfaceFeature instance;
 
     internal BoatyMcBoatfaceFeature()
@@ -73,7 +46,163 @@ namespace UWU.Features
     {
       long seed = id.UserID ^ id.ID;
       var rng = new Random((int)(seed & 0xFFFFFFFF) ^ (int)(seed >> 32));
-      return Prefixes[rng.Next(Prefixes.Length)] + Suffixes[rng.Next(Suffixes.Length)];
+      var prefix = Prefixes[rng.Next(Prefixes.Length)];
+      var suffix = Suffixes[rng.Next(Suffixes.Length)];
+      if (prefix.ToLower() == suffix.ToLower())
+      {
+        return $"{prefix} {suffix.CapitalizeFirstLetter()}";
+      }
+      return prefix + suffix;
     }
+
+    private static readonly string[] Prefixes = new string[]
+    {
+      "Amber",
+      "Ash",
+      "Axe",
+      "Battle",
+      "Bear",
+      "Black",
+      "Blaze",
+      "Blood",
+      "Bone",
+      "Brave",
+      "Bright",
+      "Cinder",
+      "Cold",
+      "Crow",
+      "Dark",
+      "Dawn",
+      "Death",
+      "Deep",
+      "Drake",
+      "Dusk",
+      "Eagle",
+      "Ember",
+      "Fire",
+      "Flame",
+      "Frost",
+      "Ghost",
+      "Giant",
+      "Glory",
+      "Gore",
+      "Grim",
+      "Hard",
+      "Hawk",
+      "Ice",
+      "Iron",
+      "Ironfist",
+      "Lone",
+      "Long",
+      "Mighty",
+      "Mist",
+      "Moon",
+      "Night",
+      "Oak",
+      "Odin",
+      "Old",
+      "One",
+      "Pale",
+      "Rage",
+      "Raven",
+      "Red",
+      "Rock",
+      "Rune",
+      "Sea",
+      "Shadow",
+      "Silent",
+      "Skald",
+      "Skull",
+      "Snow",
+      "Steel",
+      "Stone",
+      "Storm",
+      "Strong",
+      "Sun",
+      "Swift",
+      "Thor",
+      "Thunder",
+      "True",
+      "Valkyr",
+      "Wild",
+      "Wind",
+      "Wolf",
+      "Wyrm",
+      "Young",
+    };
+
+    private static readonly string[] Suffixes = new string[]
+    {
+      "bane",
+      "beard",
+      "bearer",
+      "binder",
+      "biter",
+      "blade",
+      "blaze",
+      "blood",
+      "breaker",
+      "burner",
+      "caller",
+      "claw",
+      "cleaver",
+      "crusher",
+      "dance",
+      "doom",
+      "drinker",
+      "eater",
+      "eye",
+      "fang",
+      "fist",
+      "flame",
+      "flayer",
+      "foe",
+      "foot",
+      "forger",
+      "friend",
+      "fury",
+      "gaze",
+      "glare",
+      "grim",
+      "guard",
+      "hand",
+      "heart",
+      "helm",
+      "horn",
+      "howler",
+      "hunter",
+      "lash",
+      "maiden",
+      "mark",
+      "mauler",
+      "maw",
+      "moon"
+      "rage",
+      "reader",
+      "rider",
+      "roamer",
+      "roar",
+      "runner",
+      "sailor",
+      "scar",
+      "seeker",
+      "shade",
+      "shaper",
+      "shield",
+      "singer",
+      "slayer",
+      "smasher",
+      "smith",
+      "song",
+      "soul",
+      "spell",
+      "storm",
+      "voice",
+      "walker",
+      "warden"
+      "warrior",
+      "watcher",
+      "weaver",
+    };
   }
 }
