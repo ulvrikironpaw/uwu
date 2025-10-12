@@ -18,8 +18,12 @@ namespace UWU.Features
 
     protected override void OnPatch(Harmony harmony)
     {
-      var original = AccessTools.Method(typeof(StatusEffect), nameof(StatusEffect.Setup));
-      var prefix = AccessTools.Method(typeof(ModerBoatingFeature), nameof(StatusEffect_Setup_Prefix));
+      var original = AccessTools.Method(
+        typeof(StatusEffect), 
+        nameof(StatusEffect.Setup));
+      var prefix = AccessTools.Method(
+        typeof(ModerBoatingFeature), 
+        nameof(StatusEffect_Setup_Prefix));
       harmony.Patch(original, prefix: new(prefix));
     }
 

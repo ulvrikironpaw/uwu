@@ -25,7 +25,8 @@ namespace UWU.Features
         fontSize = 32, // A good readable size
         alignment = TextAnchor.MiddleCenter,
       };
-      style.normal.textColor = Color.white; // White text
+       // White text
+      style.normal.textColor = Color.white;
 
       // We also change the unit depending on whether the player is on a ship or not.
       string speedText = $"{currentSpeed:F1} m/s";
@@ -51,7 +52,7 @@ namespace UWU.Features
       updateTimer += Time.deltaTime;
       if (updateTimer < maxTime) return;
       updateTimer = 0f;
-
+      // Record the current speed.
       currentSpeed = localPlayer.GetVelocity().magnitude;
     }
   }

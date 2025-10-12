@@ -45,9 +45,15 @@ namespace UWU.Features
 
     protected override void OnPatch(Harmony harmony)
     {
-      var original = AccessTools.Method(typeof(Ship), nameof(Ship.CustomFixedUpdate));
-      var prefix = AccessTools.Method(typeof(SailFasterFeature), nameof(Ship_CustomFixedUpdate_Prefix));
-      var postfix = AccessTools.Method(typeof(SailFasterFeature), nameof(Ship_CustomFixedUpdate_Postfix));
+      var original = AccessTools.Method(
+        typeof(Ship), 
+        nameof(Ship.CustomFixedUpdate));
+      var prefix = AccessTools.Method(
+        typeof(SailFasterFeature), 
+        nameof(Ship_CustomFixedUpdate_Prefix));
+      var postfix = AccessTools.Method(
+        typeof(SailFasterFeature), 
+        nameof(Ship_CustomFixedUpdate_Postfix));
       harmony.Patch(original, prefix: new(prefix), postfix: new(postfix));
     }
 

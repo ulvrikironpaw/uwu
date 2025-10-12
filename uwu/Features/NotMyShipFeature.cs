@@ -11,8 +11,13 @@ namespace UWU.Features
 
     protected override void OnPatch(Harmony harmony)
     {
-      var original = AccessTools.Method(typeof(BaseAI), nameof(BaseAI.CanSenseTarget), new[] { typeof(Character) });
-      var postfix = AccessTools.Method(typeof(NotMyShipFeature), nameof(BaseAI_CanSenseTarget_Postfix));
+      var original = AccessTools.Method(
+        typeof(BaseAI), 
+        nameof(BaseAI.CanSenseTarget), 
+        new[] { typeof(Character) });
+      var postfix = AccessTools.Method(
+        typeof(NotMyShipFeature), 
+        nameof(BaseAI_CanSenseTarget_Postfix));
       harmony.Patch(original, postfix: new(postfix));
     }
 

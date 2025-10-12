@@ -12,8 +12,12 @@ namespace UWU.Features
 
     protected override void OnPatch(Harmony harmony)
     {
-      var original = AccessTools.Method(typeof(Player), "RemovePiece");
-      var prefix = AccessTools.Method(typeof(ShipBonkiesFeature), nameof(Player_RemovePiece_Prefix));
+      var original = AccessTools.Method(
+        typeof(Player), 
+        "RemovePiece");
+      var prefix = AccessTools.Method(
+        typeof(ShipBonkiesFeature), 
+        nameof(Player_RemovePiece_Prefix));
       harmony.Patch(original, prefix: new(prefix));
     }
 

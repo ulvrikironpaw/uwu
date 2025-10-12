@@ -44,8 +44,12 @@ namespace UWU.Features
 
     protected override void OnPatch(Harmony harmony)
     {
-      var original = AccessTools.Method(typeof(Ship), "GetSailForce");
-      var prefix = AccessTools.Method(typeof(SailingGraceFeature), nameof(Ship_GetSailForce_Prefix));
+      var original = AccessTools.Method(
+        typeof(Ship), 
+        "GetSailForce");
+      var prefix = AccessTools.Method(
+        typeof(SailingGraceFeature), 
+        nameof(Ship_GetSailForce_Prefix));
       harmony.Patch(original, prefix: new(prefix));
     }
 

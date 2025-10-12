@@ -16,6 +16,7 @@ All features are toggleable in the configuration file, but can also be enabled/d
 
 ### Sailing
 
+
 1. ModerBoating
 
     Permanently applies the Moder buff. Default is false.
@@ -48,11 +49,29 @@ All features are toggleable in the configuration file, but can also be enabled/d
 
     A lightweight UI speedometer in meters per second that is largely for debugging sailing speeds. Default is false.
 
+9. ShipRename
+
+    Allows renaming ships. This shows up when enabling ShipNameplates or ShipPins
+
+10. ShipNameplates
+
+    Adds nameplates to ships in game
+
+11. BoatyMcBoatface
+
+    Automatically names ships when they are first created. Uses a Suffix + Prefix
+     to generate fun names like Wolfstorm. These can be renamed using ShipRename
+
 ## Feature Requests
 
 Please file an issue on Github. Please limit feature requests to QoL changes in exploration.
 
 ## Changelog
+
+### 0.1.0
+
+- Adds ShipRename, ShipNameplates, BoatyMcBoatface features
+- Better lifecycle management
 
 ### 0.0.2
 

@@ -33,8 +33,12 @@ namespace UWU.Features
 
     protected override void OnPatch(Harmony harmony)
     {
-      var getHoverTextOriginal = AccessTools.Method(typeof(ShipControlls), nameof(ShipControlls.GetHoverText));
-      var getHoverTextPostfix = AccessTools.Method(typeof(ShipRenameFeature), nameof(ShipControlls_GetHoverText_Postfix));
+      var getHoverTextOriginal = AccessTools.Method(
+        typeof(ShipControlls), 
+        nameof(ShipControlls.GetHoverText));
+      var getHoverTextPostfix = AccessTools.Method(
+        typeof(ShipRenameFeature), 
+        nameof(ShipControlls_GetHoverText_Postfix));
       harmony.Patch(getHoverTextOriginal, postfix: new(getHoverTextPostfix));
     }
 

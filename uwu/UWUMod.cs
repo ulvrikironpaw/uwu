@@ -19,7 +19,6 @@ namespace UWU
       if (!isConfigured)
       {
         isConfigured = true;
-
         features = new UWUFeature[]
         {
           new BoatyMcBoatfaceFeature(),
