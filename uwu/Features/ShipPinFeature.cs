@@ -90,6 +90,8 @@ namespace UWU.Features
       // Find all ships and update/add pins
       foreach (var kvp in SailPins)
       {
+        // Update the name
+        kvp.Value.m_name = ObjectUtils.GetLabelFromZDO(kvp.Key);
         // Update pin position
         kvp.Value.m_pos = kvp.Key.GetPosition();
       }
