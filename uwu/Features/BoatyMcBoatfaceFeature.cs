@@ -24,10 +24,10 @@ namespace UWU.Features
     protected override void OnPatch(Harmony harmony)
     {
       var original = AccessTools.Method(
-        typeof(Ship), 
+        typeof(Ship),
         "Start");
       var prefix = AccessTools.Method(
-        typeof(BoatyMcBoatfaceFeature), 
+        typeof(BoatyMcBoatfaceFeature),
         nameof(Ship_Start_Patch));
       harmony.Patch(original, prefix: new(prefix));
     }
@@ -35,7 +35,7 @@ namespace UWU.Features
     private static void Ship_Start_Patch(Ship __instance)
     {
       var zNetView = __instance.GetComponent<ZNetView>();
-      if (zNetView == null || !zNetView.IsValid() || !zNetView.IsOwner()) 
+      if (zNetView == null || !zNetView.IsValid() || !zNetView.IsOwner())
         return;
 
       var zdo = zNetView.GetZDO();
@@ -179,6 +179,7 @@ namespace UWU.Features
       "lash",
       "maiden",
       "mark",
+      "mast",
       "mauler",
       "maw",
       "moon",
@@ -188,6 +189,7 @@ namespace UWU.Features
       "roamer",
       "roar",
       "runner",
+      "sail",
       "sailor",
       "scar",
       "seeker",
