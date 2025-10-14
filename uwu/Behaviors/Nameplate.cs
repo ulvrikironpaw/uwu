@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UWU.Common;
@@ -12,16 +13,17 @@ namespace UWU.Behaviors
   {
     // Must be set after AddComponent in the parent.
     internal MonoBehaviour target;
+    internal GameObject parentObject;
     private TextMeshPro textMeshPro;
 
-    void Start()
+    IEnumerator Start()
     {
       // Create text mesh.
       textMeshPro = gameObject.AddComponent<TextMeshPro>();
       textMeshPro.font = Resources.FindObjectsOfTypeAll<TMP_FontAsset>()
           .FirstOrDefault(f => f.name == "Valheim-Norse");
       textMeshPro.fontStyle = FontStyles.Bold;
-      textMeshPro.fontSize = 10f;
+      textMeshPro.fontSize = 9.5f;
       // White.
       textMeshPro.color = new Color(1f, 1f, 1f);
       textMeshPro.alignment = TextAlignmentOptions.Center;
@@ -32,6 +34,30 @@ namespace UWU.Behaviors
       mat.SetColor("_OutlineColor", new Color(0f, 0f, 0.3f, 1f)); // Dark blue
       mat.SetFloat("_OutlineWidth", 0.085f);
       textMeshPro.fontMaterial = mat;
+
+      // The object has to be around long enough for physics to be applied.
+      // Just wait 2.5 seconds since that is probably long enough for a save
+      // operation which would disrupt.
+      yield return new WaitForSeconds(2.5f);
+
+      var attachTransform = target switch
+      {
+        Ship =>
+          target.transform.Find("ship/visual/mast/pillar") // Rafts
+          ?? target.transform.Find("ship/visual/Mast/mast") // Longships/VikingShips
+          ?? target.transform.Find("ship/mast"), // Else.
+        _ => null,
+      };
+      if (attachTransform == null)
+      {
+        Jotunn.Logger.LogInfo($"Unable to find nameplate anchor for {ObjectUtils.GetLabelFromObject(target)}, falling back to transform");
+        attachTransform = target.transform;
+      }
+
+      var topWorld = ObjectUtils.GetTopCenterPoint(attachTransform);
+
+      parentObject.transform.position = topWorld + (Vector3.up * 0.5f);
+      parentObject.transform.SetParent(target.transform, worldPositionStays: true);
     }
 
     void LateUpdate()
@@ -68,40 +94,18 @@ namespace UWU.Behaviors
       // Skip if already has a label
       if (target.GetComponentInChildren<Nameplate>() == null)
       {
-        Nameplate.Decorate(target);
+        Decorate(target);
       }
     }
 
     internal static void Decorate(MonoBehaviour target)
     {
-      Renderer[] renderers = target.GetComponentsInChildren<Renderer>();
-      if (renderers.Length < 0) return;
-
-      var combined = renderers[0].bounds;
-      foreach (var r in renderers)
-      {
-        combined.Encapsulate(r.bounds);
-      }
-
-      // Top point in world space
-      Vector3 topWorld = new(
-          combined.center.x,
-          combined.max.y,
-          combined.center.z
-      );
-
-      // Convert to ship local space
-      Vector3 topLocal = target.transform.InverseTransformPoint(topWorld);
-
-      // Create label 
       var go = new GameObject();
-      go.transform.SetParent(target.transform);
-      go.transform.localPosition = topLocal + (Vector3.up * 0.5f) + (Vector3.forward * 0.5f);
-      go.transform.localRotation = Quaternion.identity;
       go.transform.localScale = Vector3.one;
 
       var nameplate = go.AddComponent<Nameplate>();
       nameplate.target = target;
+      nameplate.parentObject = go;
     }
   }
 }
