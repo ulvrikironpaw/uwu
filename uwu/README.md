@@ -43,7 +43,7 @@ All features are toggleable in the configuration file, but can also be enabled/d
 
 7. ShipPin
 
-    Tracks ships on the map. Default is true.
+    Tracks ships on the map using the ship icon. When ships have a custom name it is displayed. When not, the name of the ship is displayed. Default is true.
 
 8. Speedometer
 
@@ -66,12 +66,17 @@ All features are toggleable in the configuration file, but can also be enabled/d
 
 Please file an issue on Github. Please limit feature requests to QoL changes in exploration.
 
+## Known issues
+
+- If you spawn a boat really high up in the air using console commands, Ship nameplates are sometimes slightly off-center
+
 ## Changelog
 
 ### 0.1.0
 
 - Adds ShipRename, ShipNameplates, BoatyMcBoatface features
 - Better lifecycle management
+- Adds boat icons to ShipPin feature and reduced update time
 
 ### 0.0.2
 

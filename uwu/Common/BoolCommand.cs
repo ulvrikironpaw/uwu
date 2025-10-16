@@ -57,7 +57,9 @@ namespace UWU.Common
           return;
         case "false":
           setValue(false);
-          Jotunn.Logger.LogInfo($"{Name} set to {false}");
+          MessageHud.instance?.ShowMessage(
+              MessageHud.MessageType.Center,
+              $"{Name} set to {false}");
           return;
         default:
           MessageHud.instance?.ShowMessage(

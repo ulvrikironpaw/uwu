@@ -7,13 +7,14 @@ namespace UWU.Features
 {
   internal sealed class ShipPinFeature : UWUFeature
   {
+    private const float ICON_SCALE = 1.35f;
     internal override string Name => "ShipPin";
     protected override string Category => "Sailing";
     protected override string Description => "Tracks ships on the map";
 
     private const float scanInterval = 5f;
-    private const float updateInterval = 0.5f;
-    private readonly Dictionary<ZDO, Minimap.PinData> SailPins = new();
+    private const float updateInterval = 0.17f;
+    private readonly Dictionary<ZDO, SailPinData> SailPins = new();
     private float scanTimer = 0f;
     private float updateTimer = 0f;
 
@@ -44,32 +45,38 @@ namespace UWU.Features
 
     private void RemoveSailPins()
     {
-      foreach (var value in SailPins.Values)
+      foreach (SailPinData value in SailPins.Values)
       {
-        Minimap.instance.RemovePin(value);
+        Minimap.instance.RemovePin(value.PinData);
       }
       SailPins.Clear();
     }
 
     private void RescanShips()
     {
-      var allShips = ObjectUtils.EnumerateZDOsOfType<Ship>().ToList();
+      var allShips = ObjectUtils.EnumerateZDOsOfTypeByPosition<Ship>().ToList();
 
       // Add all ships that are new from the scan.
       foreach (ZDO ship in allShips)
       {
-        if (!SailPins.ContainsKey(ship))
+        var isInitialSetup = !SailPins.ContainsKey(ship);
+        if (isInitialSetup)
         {
           // Add a pin for new ships
+          var buildIcon = ObjectUtils.GetBuildIconFromZDO(ship);
           var displayName = ObjectUtils.GetLabelFromZDO(ship);
-          var pin = Minimap.instance.AddPin(
+          var pinData = Minimap.instance.AddPin(
               ship.GetPosition(),
-              Minimap.PinType.Icon3,
+              buildIcon == null ? Minimap.PinType.Icon3 : Minimap.PinType.None,
               displayName,
               save: false,
               isChecked: false
           );
-          SailPins[ship] = pin;
+          if (buildIcon != null)
+          {
+            pinData.m_icon = buildIcon;
+          }
+          SailPins[ship] = new SailPinData { PinData = pinData };
         }
       }
       // Clean up ships that no longer exist.
@@ -78,8 +85,8 @@ namespace UWU.Features
         var ship = kvp.Key;
         if (!allShips.Contains(ship))
         {
-          var pin = kvp.Value;
-          Minimap.instance.RemovePin(pin);
+          SailPinData pinData = kvp.Value;
+          Minimap.instance.RemovePin(pinData.PinData);
           SailPins.Remove(ship);
         }
       }
@@ -90,11 +97,36 @@ namespace UWU.Features
       // Find all ships and update/add pins
       foreach (var kvp in SailPins)
       {
+        var ship = kvp.Key;
+        var sailPinData = kvp.Value;
+
+        if (sailPinData.IsIconSetup)
+        {
+          // Try to flip the icon when the ship goes east.
+          var image = sailPinData.PinData?.m_iconElement;
+          if (image != null)
+          {
+            var rt = image.rectTransform;
+            var scale = rt.localScale;
+            scale.x = ICON_SCALE;
+            scale.y = ICON_SCALE;
+            rt.localScale = scale;
+            sailPinData.IsIconSetup = true;
+          }
+        }
+
         // Update the name
-        kvp.Value.m_name = ObjectUtils.GetLabelFromZDO(kvp.Key);
+        sailPinData.PinData.m_name = ObjectUtils.GetLabelFromZDO(ship);
         // Update pin position
-        kvp.Value.m_pos = kvp.Key.GetPosition();
+        sailPinData.PinData.m_pos = ship.GetPosition();
       }
+    }
+
+    class SailPinData
+    {
+      internal Minimap.PinData PinData { get; set; }
+
+      internal bool IsIconSetup { get; set; } = true;
     }
   }
 }

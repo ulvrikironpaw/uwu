@@ -46,7 +46,6 @@ namespace UWU.Common
 
     private static void RPC_ServerReceiveRename(long sender, ZPackage package)
     {
-      Jotunn.Logger.LogFatal($"ServerReceiveRename");
       var zdoid = package.ReadZDOID();
       var newName = package.ReadString();
       var zdo = ZDOMan.instance.GetZDO(zdoid);

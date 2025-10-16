@@ -16,42 +16,42 @@ All features are toggleable in the configuration file, but can also be enabled/d
 
 ### Sailing
 
+
 1. ModerBoating
 
-   Permanently applies the Moder buff. Default is false.
+    Permanently applies the Moder buff. Default is false.
 
 2. NotMyShip
 
-   Aggression toward ships will be reduced while no player is aboard. Default is true.
+    Aggression toward ships will be reduced while no player is aboard. Default is true.
 
 3. PaddleFaster
 
-   Makes paddling forward and backward about twice as fast. Default is true.
+    Makes paddling forward and backward about twice as fast. Default is true.
 
 4. SailFaster
 
-   Makes ship sailing speed about 40% faster. Default is true.
+    Makes ship sailing speed about 40% faster. Default is true.
 
 5. SailingGrace
 
-   Reduces the penalty for headwinds. Full mast in a headwind is a little slower than the PaddleFaster option. Default is true.
+    Reduces the penalty for headwinds. Full mast in a headwind is a little slower than the PaddleFaster option. Default is true.
 
 6. ShipBonkies
 
-   Hammer destructs ships for a full refund when no player is aboard. Default is true.
+    Hammer destructs ships for a full refund when no player is aboard. Default is true.
 
 7. ShipPin
 
-   Tracks ships on the map. Default is true.
+    Tracks ships on the map using the ship icon. When ships have a custom name it is displayed. When not, the name of the ship is displayed. Default is true.
 
 8. Speedometer
 
-   A lightweight UI speedometer in meters per second that is largely for debugging sailing speeds. Default is false.
+    A lightweight UI speedometer in meters per second that is largely for debugging sailing speeds. Default is false.
 
 9. ShipRename
 
-   Allows renaming ships. This shows up when enabling ShipNameplates or ShipPins. Rename hotkey defaults to N. Ships can
-   be renamed from their rudder/ship controls.
+    Allows renaming ships. This shows up when enabling ShipNameplates or ShipPins
 
 10. ShipNameplates
 
@@ -60,11 +60,15 @@ All features are toggleable in the configuration file, but can also be enabled/d
 11. BoatyMcBoatface
 
     Automatically names ships when they are first created. Uses a Suffix + Prefix
-    to generate fun names like Wolfstorm. These can be renamed using ShipRename
+     to generate fun names like Wolfstorm. These can be renamed using ShipRename
 
 ## Feature Requests
 
 Please file an issue on Github. Please limit feature requests to QoL changes in exploration.
+
+## Known issues
+
+- If you spawn a boat really high up in the air using console commands, Ship nameplates are sometimes slightly off-center
 
 ## Changelog
 
@@ -72,6 +76,7 @@ Please file an issue on Github. Please limit feature requests to QoL changes in 
 
 - Adds ShipRename, ShipNameplates, BoatyMcBoatface features
 - Better lifecycle management
+- Adds boat icons to ShipPin feature and reduced update time
 
 ### 0.0.2
 

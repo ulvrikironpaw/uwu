@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Jotunn.Managers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +8,17 @@ namespace UWU.Common
 {
   internal class ObjectUtils
   {
+
+    /// <summary>
+    /// Same as EnumerateZDOsOfType but presorts by z and then x position.
+    /// </summary>
+    internal static IEnumerable<ZDO> EnumerateZDOsOfTypeByPosition<T>() where T : MonoBehaviour
+    {
+      return EnumerateZDOsOfType<T>()
+        .OrderByDescending(zdo => zdo.GetPosition().z)
+        .ThenBy(zdo => zdo.GetPosition().x);
+    }
+
     /// <summary>
     /// Gets all saved instances of a specific type of component. Avoid using in a tight loop.
     /// </summary>
@@ -84,6 +96,18 @@ namespace UWU.Common
     }
 
     /// <summary>
+    /// Returns the name.
+    /// </summary>
+    internal static string GetNameFromZDO(ZDO zdo)
+    {
+      var prefab = zdo.GetPrefab();
+      if (prefab == 0) return "(unknown Prefab)";
+
+      return ZNetScene.instance.GetPrefab(prefab)?.name ?? "";
+    }
+
+
+    /// <summary>
     /// Returns the display name.
     /// </summary>
     internal static string GetCustomLabelFromZDO(ZDO zdo)
@@ -125,6 +149,31 @@ namespace UWU.Common
           bounds.center.z
       );
     }
+
+    public static Sprite GetBuildIconFromZDO(ZDO zdo)
+    {
+      var prefabName = GetNameFromZDO(zdo);
+      if (string.IsNullOrWhiteSpace(prefabName)) return null;
+
+      return GetBuildIconFromString(prefabName.Replace("(Clone)", "").Trim());
+    }
+
+    public static Sprite GetBuildIconFromString(string shipPieceName)
+    {
+      var pieceTable = PieceManager.Instance.GetPieceTable("Hammer");
+
+      // Search the piece table for a part that has the name.
+      var shipPiece = pieceTable?.m_pieces.FirstOrDefault(p => p.name.Contains(shipPieceName));
+      if (!shipPiece)
+      {
+        Jotunn.Logger.LogError($"Could not find piece with name containing '{shipPieceName}'");
+        return null;
+      }
+      // Get the Piece component and return its icon if present.
+      var piece = shipPiece.GetComponent<Piece>();
+      return piece?.m_icon;
+    }
+
 
 #if DEBUG
     internal static void PrintAllChildTransforms(Transform root, string indent = "")
