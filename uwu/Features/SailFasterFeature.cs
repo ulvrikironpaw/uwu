@@ -86,7 +86,7 @@ namespace UWU.Features
     /// </summary>
     struct Ship_CustomFixedUpdate_State
     {
-      public float initialSailForceFactor;
+      internal float initialSailForceFactor;
     }
   }
 }

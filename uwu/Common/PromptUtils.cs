@@ -26,7 +26,7 @@ namespace UWU.Common
 
   class TextDialogMediator : TextReceiver
   {
-    public Action<string> OnComplete { get; set; }
+    internal Action<string> OnComplete { get; set; }
 
     private string text = "";
 

@@ -10,11 +10,11 @@ namespace UWU.Common
     private static readonly Dictionary<string, Sprite> iconCache = new();
 
     /// <summary>
-    /// Returns the 
+    /// Returns the Sprite for the icon if it exists in the build menu.
     /// </summary>
     /// <param name="shipPieceName"></param>
     /// <returns></returns>
-    public static Sprite GetBuildIconFromString(string pieceName)
+    internal static Sprite GetBuildIconFromString(string pieceName)
     {
       if (iconCache.TryGetValue(pieceName, out var icon))
       {
@@ -35,7 +35,12 @@ namespace UWU.Common
       return icon;
     }
 
-    public static Sprite GetBuildIconFromZDO(ZDO zdo)
+    /// <summary>
+    /// Returns the build icon if any from the ZDO's prefab definiton.
+    /// </summary>
+    /// <param name="zdo"></param>
+    /// <returns></returns>
+    internal static Sprite GetBuildIconFromZDO(ZDO zdo)
     {
       var prefabName = NameCache.GetNameFromZDO(zdo);
       if (string.IsNullOrWhiteSpace(prefabName)) return null;

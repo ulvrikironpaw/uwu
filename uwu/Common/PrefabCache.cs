@@ -11,8 +11,6 @@ namespace UWU.Common
   internal static class PrefabCache<T>
   {
     private static HashSet<int> hashcodeCache = new();
-    private static Dictionary<int, string> nameCache = new();
-    private static Dictionary<int, string> labelCache = new();
     private static bool isBuilt = false;
 
     static PrefabCache()
@@ -27,7 +25,7 @@ namespace UWU.Common
     /// </summary>
     /// <param name="forceRebuild"></param>
     /// <returns></returns>
-    public static bool Build(bool forceRebuild = false)
+    internal static bool Build(bool forceRebuild = false)
     {
       if (isBuilt && !forceRebuild) return true;
 
@@ -45,14 +43,11 @@ namespace UWU.Common
           var hash = prefab.name.GetStableHashCode();
           newHashcodeCache.Add(hash);
           newNameCache[hash] = prefab.name;
-          newLabelCache[hash] = RsolvePrefabLabel(prefab.name);
         }
       }
 
       isBuilt = true;
       hashcodeCache = newHashcodeCache;
-      nameCache = newNameCache;
-      labelCache = newLabelCache;
       return true;
     }
 
@@ -70,52 +65,5 @@ namespace UWU.Common
       return hashcodeCache.Contains(prefabHash);
     }
 
-
-    /// <summary>
-    /// Gets the prefab name for a given prefab hash (if cached).
-    /// </summary>
-    internal static string GetPrefabName(int prefabHash)
-    {
-      if (!isBuilt)
-      {
-        Build();
-      }
-
-      if (nameCache.TryGetValue(prefabHash, out var name)) return name;
-      return "(unknown prefab)";
-    }
-
-    /// <summary>
-    /// Gets a display label (friendly name) for the prefab hash.
-    /// </summary>
-    internal static string GetLabel(int prefabHash)
-    {
-      if (!isBuilt)
-      {
-        Build();
-      }
-
-      if (labelCache.TryGetValue(prefabHash, out var label)) return label;
-      return "(unknown prefab)";
-    }
-
-
-    /// <summary>
-    /// Returns the display name.
-    /// </summary>
-    private static string RsolvePrefabLabel(string prefabName)
-    {
-      if (string.IsNullOrWhiteSpace(prefabName))
-      {
-        return "(unknown object name)";
-      }
-
-      return prefabName.ToLowerInvariant() switch
-      {
-        "vikingship" => "Longship",
-        "vikingship_ashlands" => "Drakkar",
-        _ => prefabName,
-      };
-    }
   }
 }

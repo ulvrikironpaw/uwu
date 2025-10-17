@@ -4,7 +4,11 @@ namespace UWU.Common
 {
   internal static class PhysicsUtils
   {
-
+    /// <summary>
+    /// Gets the top center point of the given transform.
+    /// </summary>
+    /// <param name="attachTransform"></param>
+    /// <returns></returns>
     internal static Vector3 GetTopCenterPoint(Transform attachTransform)
     {
       Renderer[] renderers = attachTransform.GetComponentsInChildren<Renderer>();

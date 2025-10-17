@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace UWU.Common
 {
-
   internal class NameCache
   {
     private static readonly Dictionary<int, string> nameCache = new();
@@ -18,7 +17,6 @@ namespace UWU.Common
         nameCache.Clear();
       };
     }
-
 
     /// <summary>
     /// Gets the prefab name for a given prefab hash (if cached).
@@ -92,13 +90,11 @@ namespace UWU.Common
       return GetLabel(prefab);
     }
 
-
     /// <summary>
     /// Returns the display name.
     /// </summary>
     internal static string GetCustomLabelFromZDO(ZDO zdo)
         => zdo.GetString(Constants.CUSTOM_LABEL_PROPERTY, "") ?? "";
-
 
     /// <summary>
     /// Returns the display name.

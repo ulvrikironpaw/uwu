@@ -74,7 +74,7 @@ namespace UWU.Features
     /// </summary>
     struct Ship_CustomFixedUpdate_State
     {
-      public float initialBackwardForce;
+      internal float initialBackwardForce;
     }
   }
 }
