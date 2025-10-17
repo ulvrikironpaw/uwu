@@ -50,11 +50,11 @@ namespace UWU.Behaviors
       };
       if (attachTransform == null)
       {
-        Jotunn.Logger.LogInfo($"Unable to find nameplate anchor for {ObjectUtils.GetLabelFromObject(target)}, falling back to transform");
+        Jotunn.Logger.LogInfo($"Unable to find nameplate anchor for {NameCache.GetLabelFromObject(target)}, falling back to transform");
         attachTransform = target.transform;
       }
 
-      var topWorld = ObjectUtils.GetTopCenterPoint(attachTransform);
+      var topWorld = PhysicsUtils.GetTopCenterPoint(attachTransform);
 
       parentObject.transform.position = topWorld + (Vector3.up * 0.5f);
       parentObject.transform.SetParent(target.transform, worldPositionStays: true);
@@ -76,7 +76,7 @@ namespace UWU.Behaviors
       }
 
       // Update text
-      string name = ObjectUtils.GetLabelFromObject(target);
+      string name = NameCache.GetLabelFromObject(target);
       textMeshPro.text = string.IsNullOrWhiteSpace(name) ? "" : name.Trim();
     }
 

@@ -63,8 +63,8 @@ namespace UWU.Features
         if (isInitialSetup)
         {
           // Add a pin for new ships
-          var buildIcon = ObjectUtils.GetBuildIconFromZDO(ship);
-          var displayName = ObjectUtils.GetLabelFromZDO(ship);
+          var buildIcon = IconUtils.GetBuildIconFromZDO(ship);
+          var displayName = NameCache.GetLabelFromZDO(ship);
           var pinData = Minimap.instance.AddPin(
               ship.GetPosition(),
               buildIcon == null ? Minimap.PinType.Icon3 : Minimap.PinType.None,
@@ -116,7 +116,7 @@ namespace UWU.Features
         }
 
         // Update the name
-        sailPinData.PinData.m_name = ObjectUtils.GetLabelFromZDO(ship);
+        sailPinData.PinData.m_name = NameCache.GetLabelFromZDO(ship);
         // Update pin position
         sailPinData.PinData.m_pos = ship.GetPosition();
       }

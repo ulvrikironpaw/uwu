@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using Jotunn.Managers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,6 +7,45 @@ namespace UWU.Common
 {
   internal class ObjectUtils
   {
+    private static readonly AccessTools.FieldRef<ZDOMan, Dictionary<ZDOID, ZDO>> ObjectsByIdRef =
+      AccessTools.FieldRefAccess<ZDOMan, Dictionary<ZDOID, ZDO>>("m_objectsByID");
+
+    private static readonly AccessTools.FieldRef<ZDOMan, List<ZDOID>> DestroySendListRef =
+      AccessTools.FieldRefAccess<ZDOMan, List<ZDOID>>("m_destroySendList");
+
+    private static readonly AccessTools.FieldRef<ZNetScene, Dictionary<ZDO, ZNetView>> Instances =
+      AccessTools.FieldRefAccess<ZNetScene, Dictionary<ZDO, ZNetView>>("m_instances");
+
+    /// <summary>
+    /// Gets all saved instances of a specific type of component. Avoid using in a tight loop.
+    /// </summary>
+    internal static IEnumerable<ZDO> EnumerateZDOsOfType<T>() where T : MonoBehaviour
+    {
+      PrefabCache<T>.Build();
+
+      var zdoman = ZDOMan.instance;
+      if (zdoman == null)
+        yield break;
+
+      var objects = ObjectsByIdRef(zdoman);
+      if (objects == null || objects.Count == 0)
+        yield break;
+
+      var destroyedList = DestroySendListRef(zdoman);
+      var destroyedSet = destroyedList == null || destroyedList.Count == 0
+        ? null
+        : new HashSet<ZDOID>(destroyedList);
+      foreach (var zdo in objects.Values)
+      {
+        var prefabHash = zdo.GetPrefab();
+        if (prefabHash != 0
+          && PrefabCache<T>.Contains(prefabHash)
+          && (destroyedSet == null || !destroyedSet.Contains(zdo.m_uid)))
+        {
+          yield return zdo;
+        }
+      }
+    }
 
     /// <summary>
     /// Same as EnumerateZDOsOfType but presorts by z and then x position.
@@ -20,34 +58,57 @@ namespace UWU.Common
     }
 
     /// <summary>
-    /// Gets all saved instances of a specific type of component. Avoid using in a tight loop.
+    /// Enumerates all ZDOs with that type included that are actively loaded.
     /// </summary>
-    internal static IEnumerable<ZDO> EnumerateZDOsOfType<T>() where T : MonoBehaviour
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    internal static IEnumerable<ZDO> EnumerateLoadedZDOsOfType<T>() where T : MonoBehaviour
     {
-      var objects = Traverse.Create(ZDOMan.instance).Field("m_objectsByID").GetValue() as Dictionary<ZDOID, ZDO>;
-      if (objects == null) return new List<ZDO>();
+      PrefabCache<T>.Build();
 
-      var destroyedList = Traverse.Create(ZDOMan.instance).Field("m_destroySendList").GetValue() as List<ZDOID>;
-      return objects.Values.Where(zdo =>
+      var scene = ZNetScene.instance;
+      if (scene == null) yield break;
+
+      var instances = Instances(scene);
+      foreach (var view in instances.Values)
       {
-        int prefabHash = zdo.GetPrefab();
-        if (prefabHash == 0) return false;
+        if (view == null) continue;
 
-        var prefab = ZNetScene.instance.GetPrefab(prefabHash);
-        if (prefab == null || !prefab.GetComponents<T>().Any()) return false;
+        var zdo = view.GetZDO();
+        if (zdo == null) continue;
 
-        return true;
-      });
+        if (!PrefabCache<T>.Contains(zdo.GetPrefab())) continue;
+
+        yield return zdo;
+      }
     }
 
     /// <summary>
-    /// Gets all instances alive (in the current client session).
+    /// Enumerates all T Components that are currently loaded.
     /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     internal static IEnumerable<T> EmumerateInstanceOfType<T>() where T : MonoBehaviour
     {
-      return Object.FindObjectsByType(typeof(T), FindObjectsSortMode.None)
-          .AsEnumerable()
-          .Cast<T>();
+      PrefabCache<T>.Build();
+
+      var scene = ZNetScene.instance;
+      if (scene == null) yield break;
+
+      var instances = Instances(scene);
+      foreach (var view in instances.Values)
+      {
+        if (view == null) continue;
+
+        var zdo = view.GetZDO();
+        if (zdo == null) continue;
+
+        if (!PrefabCache<T>.Contains(zdo.GetPrefab())) continue;
+
+        var component = view.GetComponent<T>();
+        if (component != null)
+          yield return component;
+      }
     }
 
     /// <summary>
@@ -57,133 +118,5 @@ namespace UWU.Common
     {
       return behavior.gameObject.GetComponent<ZNetView>();
     }
-
-    /// <summary>
-    /// Returns the display name.
-    /// </summary>
-    internal static string GetLabelFromObject(MonoBehaviour behavior)
-    {
-      var znetView = GetZNetView(behavior);
-      if (znetView == null) return "(unknown ZNetView)";
-
-      return GetLabelFromZNetView(znetView);
-    }
-
-    /// <summary>
-    /// Returns the display name.
-    /// </summary>
-    internal static string GetLabelFromZNetView(ZNetView netView)
-    {
-      var zdo = netView.GetZDO();
-      if (zdo == null) return "(unknown ZDO)";
-
-      return GetLabelFromZDO(zdo);
-    }
-
-    /// <summary>
-    /// Returns the display name.
-    /// </summary>
-    internal static string GetLabelFromZDO(ZDO zdo)
-    {
-      var uwuName = GetCustomLabelFromZDO(zdo);
-      if (!string.IsNullOrWhiteSpace(uwuName)) return uwuName;
-
-      var prefab = zdo.GetPrefab();
-      if (prefab == 0) return "(unknown Prefab)";
-
-      string prefabName = ZNetScene.instance.GetPrefab(prefab)?.name ?? "";
-      return GetLabelFromPrefab(prefabName);
-    }
-
-    /// <summary>
-    /// Returns the name.
-    /// </summary>
-    internal static string GetNameFromZDO(ZDO zdo)
-    {
-      var prefab = zdo.GetPrefab();
-      if (prefab == 0) return "(unknown Prefab)";
-
-      return ZNetScene.instance.GetPrefab(prefab)?.name ?? "";
-    }
-
-
-    /// <summary>
-    /// Returns the display name.
-    /// </summary>
-    internal static string GetCustomLabelFromZDO(ZDO zdo)
-        => zdo.GetString(Constants.CUSTOM_LABEL_PROPERTY, "") ?? "";
-
-    /// <summary>
-    /// Returns the display name.
-    /// </summary>
-    internal static string GetLabelFromPrefab(string prefabName)
-    {
-      if (string.IsNullOrWhiteSpace(prefabName))
-      {
-        return "(unknown object name)";
-      }
-
-      return prefabName.ToLower() switch
-      {
-        "vikingship" => "Longship",
-        "vikingship_ashlands" => "Drakkar",
-        _ => prefabName,
-      };
-    }
-
-    internal static Vector3 GetTopCenterPoint(Transform attachTransform)
-    {
-      Renderer[] renderers = attachTransform.GetComponentsInChildren<Renderer>();
-
-      if (renderers.Length == 0) return attachTransform.position;
-
-      Bounds bounds = renderers[0].bounds;
-      for (int i = 1; i < renderers.Length; i++)
-      {
-        bounds.Encapsulate(renderers[i].bounds);
-      }
-
-      return new Vector3(
-          bounds.center.x,
-          bounds.max.y,
-          bounds.center.z
-      );
-    }
-
-    public static Sprite GetBuildIconFromZDO(ZDO zdo)
-    {
-      var prefabName = GetNameFromZDO(zdo);
-      if (string.IsNullOrWhiteSpace(prefabName)) return null;
-
-      return GetBuildIconFromString(prefabName.Replace("(Clone)", "").Trim());
-    }
-
-    public static Sprite GetBuildIconFromString(string shipPieceName)
-    {
-      var pieceTable = PieceManager.Instance.GetPieceTable("Hammer");
-
-      // Search the piece table for a part that has the name.
-      var shipPiece = pieceTable?.m_pieces.FirstOrDefault(p => p.name.Contains(shipPieceName));
-      if (!shipPiece)
-      {
-        Jotunn.Logger.LogError($"Could not find piece with name containing '{shipPieceName}'");
-        return null;
-      }
-      // Get the Piece component and return its icon if present.
-      var piece = shipPiece.GetComponent<Piece>();
-      return piece?.m_icon;
-    }
-
-
-#if DEBUG
-    internal static void PrintAllChildTransforms(Transform root, string indent = "")
-    {
-      Debug.Log($"{indent}{root.name}");
-      foreach (Transform child in root)
-      {
-        PrintAllChildTransforms(child, indent + "  ");
-      }
-    }
-#endif
   }
 }

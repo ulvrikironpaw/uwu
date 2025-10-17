@@ -34,10 +34,10 @@ namespace UWU.Features
     protected override void OnPatch(Harmony harmony)
     {
       var getHoverTextOriginal = AccessTools.Method(
-        typeof(ShipControlls), 
+        typeof(ShipControlls),
         nameof(ShipControlls.GetHoverText));
       var getHoverTextPostfix = AccessTools.Method(
-        typeof(ShipRenameFeature), 
+        typeof(ShipRenameFeature),
         nameof(ShipControlls_GetHoverText_Postfix));
       harmony.Patch(getHoverTextOriginal, postfix: new(getHoverTextPostfix));
     }
@@ -58,7 +58,7 @@ namespace UWU.Features
       var zdo = zNetView.GetZDO();
       if (zdo == null) return;
 
-      string currentName = ObjectUtils.GetLabelFromZNetView(zNetView) ?? "";
+      string currentName = NameCache.GetLabelFromZNetView(zNetView) ?? "";
 
       PromptUtils.LaunchDialog($"Rename ship", currentName, (newTitle) =>
       {

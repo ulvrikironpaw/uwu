@@ -41,7 +41,7 @@ namespace UWU.Features
       var zdo = zNetView.GetZDO();
       if (zdo == null) return;
 
-      if (!ObjectUtils.GetCustomLabelFromZDO(zdo).IsNullOrWhiteSpace()) return;
+      if (!NameCache.GetCustomLabelFromZDO(zdo).IsNullOrWhiteSpace()) return;
 
       var name = GenerateStableName(zdo.m_uid);
       RPCManager.RenameObject(zdo, name);
