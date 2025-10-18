@@ -4,6 +4,6 @@
   {
     public const string PluginGUID = "com.ulvrikironpaw.uwu";
     public const string PluginName = "Ulvrik's World Update";
-    public const string PluginVersion = "0.1.0";
+    public const string PluginVersion = "0.1.1";
   }
 }

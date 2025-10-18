@@ -1,7 +1,7 @@
 ﻿{
   "name": "UlvriksWorldUpdate",
-  "description": "QoL mod that focuses on improvements to sailing and exploration for multiplayer.",
-  "version_number": "0.1.0",
+  "description": "QoL mod that focuses on improvements to sailing and exploration for multiplayer (uwu)",
+  "version_number": "0.1.1",
   "website_url": "https://github.com/ulvrikironpaw/uwu",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2333",
