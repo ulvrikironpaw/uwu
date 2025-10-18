@@ -86,8 +86,7 @@ namespace UWU.Common
     /// </summary>
     internal static string GetNameFromZDO(ZDO zdo)
     {
-      var prefab = zdo.GetPrefab();
-      return GetLabel(prefab);
+      return GetPrefabName(zdo.GetPrefab());
     }
 
     /// <summary>

@@ -72,6 +72,11 @@ Please file an issue on Github. Please limit feature requests to QoL changes in 
 
 ## Changelog
 
+### 0.1.1
+
+- Improved performance with caching and less reflection calls. On an early world this is less of an issue, but once a world gets to 30,000+ objects it was likely to become an issue
+- Hide nameplates while the local player is onboard a ship and the ship is being controlled by any player. This gets the nameplate out of your way while actively navigating
+
 ### 0.1.0
 
 - Adds ShipRename, ShipNameplates, BoatyMcBoatface features

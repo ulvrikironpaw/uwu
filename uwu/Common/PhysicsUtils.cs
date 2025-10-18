@@ -27,7 +27,6 @@ namespace UWU.Common
           bounds.center.z
       );
     }
-  }
 
 #if DEBUG
     internal static void PrintAllChildTransforms(Transform root, string indent = "")
@@ -38,5 +37,6 @@ namespace UWU.Common
         PrintAllChildTransforms(child, indent + "  ");
       }
     }
-#endif 
+#endif
+  }
 }

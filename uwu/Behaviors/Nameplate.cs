@@ -3,6 +3,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UWU.Common;
+using UWU.Extensions;
 
 namespace UWU.Behaviors
 {
@@ -11,6 +12,7 @@ namespace UWU.Behaviors
   /// </summary>
   internal class Nameplate : MonoBehaviour
   {
+
     // Must be set after AddComponent in the parent.
     internal MonoBehaviour target;
     internal GameObject parentObject;
@@ -63,6 +65,22 @@ namespace UWU.Behaviors
     void LateUpdate()
     {
       if (Camera.main == null || target == null || textMeshPro == null) return;
+
+      // If we don't actually have a local player, there isn't a reason to even
+      // do the rest of the logic.
+      var localPlayer = Player.m_localPlayer;
+      if (localPlayer == null) return;
+
+      // Special handling if it is a ship. The nameplates are kind of annoying while you are actually sailing.
+      if (target is Ship ship)
+      {
+        // Skip all other updates since the mesh isn't visible.
+        var isOnShip = localPlayer.GetControlledShip() == ship || localPlayer.GetStandingOnShip() == ship;
+        var hasControllingPlayer = ship.GetControllingPlayer_UWU();
+        var isNameplateVisible = !isOnShip || !hasControllingPlayer;
+        textMeshPro.enabled = isNameplateVisible;
+        if (!isNameplateVisible) return;
+      }
 
       // Face the camera
       var lookDirection = transform.position - Camera.main.transform.position;
