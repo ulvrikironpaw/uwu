@@ -28,10 +28,27 @@ enabled/disabled in the in-game console with the "UWU" prefixed commands.
 
 ### Sailing
 
+#### ShipPin
+
+- Tracks ships on the map using the ship's icon. When ships have a custom name it 
+  is displayed. When not, the name of the ship is displayed
+- Default is true
+
+![UWU Mod Screenshot](https://raw.githubusercontent.com/ulvrikironpaw/uwu/main/assets/screenshots/ShipPin.png)
+
+#### ShipNameplates
+
+- Adds nameplates to ships in game
+- Nameplates do not show when the local player is in a ship and that ship is 
+  actively being controlled
+- Default is true
+
+![UWU Mod Screenshot](https://raw.githubusercontent.com/ulvrikironpaw/uwu/main/assets/screenshots/ShipNameplates.png)
+
 #### BoatyMcBoatface
 
 - Automatically names ships when they are first created. Uses a Suffix + Prefix
- to generate fun names like Wolfstorm. These can be renamed using ShipRename
+ to generate fun names like Wolfstorm. These can be renamed using ShipRename 
 - Default is true
 
 #### ModerBoating
@@ -65,22 +82,9 @@ enabled/disabled in the in-game console with the "UWU" prefixed commands.
   than the PaddleFaster option
 - Default is true
 
-#### ShipPin
-
-- Tracks ships on the map using the ship's icon. When ships have a custom name it 
-  is displayed. When not, the name of the ship is displayed
-- Default is true
-
 #### ShipRename
 
 - Allows renaming ships. This shows up when enabling ShipNameplates or ShipPins
-- Default is true
-
-#### ShipNameplates
-
-- Adds nameplates to ships in game
-- Nameplates do not show when the local player is in a ship and that ship is 
-  actively being controlled
 - Default is true
 
 ### Debugging
