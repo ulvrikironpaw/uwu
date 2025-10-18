@@ -1,20 +1,12 @@
-﻿using HarmonyLib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UWU.Extensions;
 
 namespace UWU.Common
 {
   internal class ObjectUtils
   {
-    private static readonly AccessTools.FieldRef<ZDOMan, Dictionary<ZDOID, ZDO>> ObjectsByIdRef =
-      AccessTools.FieldRefAccess<ZDOMan, Dictionary<ZDOID, ZDO>>("m_objectsByID");
-
-    private static readonly AccessTools.FieldRef<ZDOMan, List<ZDOID>> DestroySendListRef =
-      AccessTools.FieldRefAccess<ZDOMan, List<ZDOID>>("m_destroySendList");
-
-    private static readonly AccessTools.FieldRef<ZNetScene, Dictionary<ZDO, ZNetView>> Instances =
-      AccessTools.FieldRefAccess<ZNetScene, Dictionary<ZDO, ZNetView>>("m_instances");
 
     /// <summary>
     /// Gets all saved instances of a specific type of component. Avoid using in a tight loop.
@@ -27,11 +19,11 @@ namespace UWU.Common
       if (zdoman == null)
         yield break;
 
-      var objects = ObjectsByIdRef(zdoman);
+      var objects = zdoman.GetObjectsById_UWU();
       if (objects == null || objects.Count == 0)
         yield break;
 
-      var destroyedList = DestroySendListRef(zdoman);
+      var destroyedList = zdoman.GetDestroyedSendList_UWU();
       var destroyedSet = destroyedList == null || destroyedList.Count == 0
         ? null
         : new HashSet<ZDOID>(destroyedList);
@@ -69,7 +61,7 @@ namespace UWU.Common
       var scene = ZNetScene.instance;
       if (scene == null) yield break;
 
-      var instances = Instances(scene);
+      var instances = scene.GetInstances_UWU();
       foreach (var view in instances.Values)
       {
         if (view == null) continue;
@@ -95,7 +87,7 @@ namespace UWU.Common
       var scene = ZNetScene.instance;
       if (scene == null) yield break;
 
-      var instances = Instances(scene);
+      var instances = scene.GetInstances_UWU();
       foreach (var view in instances.Values)
       {
         if (view == null) continue;
