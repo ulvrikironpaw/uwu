@@ -31,7 +31,7 @@ namespace UWU.Features
           name: "UWUPaddleForce",
           help: "Changes the rate of paddling. Toggle PaddleFaster to reset.",
           adminOnly: true,
-          isCheat: false,
+          isCheat: true,
           () => forceBackward,
           (value) =>
           {

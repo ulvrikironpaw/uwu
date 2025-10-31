@@ -2,7 +2,6 @@
 using Jotunn.Managers;
 using System;
 using System.Collections.Generic;
-using UWU.Common;
 
 namespace UWU.Commands
 {
@@ -34,13 +33,13 @@ namespace UWU.Commands
     {
       if (adminOnly && !SynchronizationManager.Instance.PlayerIsAdmin)
       {
-        UserHud.Alert($"{Name} can only be set by an Admin");
+        Console.instance.Print($"{Name} can only be set by an Admin");
         return;
       }
 
       if (args.Length == 0)
       {
-        UserHud.Alert($"{Name} is {getValue()}");
+        Console.instance.Print($"{Name} is {getValue()}");
         return;
       }
 
@@ -49,11 +48,11 @@ namespace UWU.Commands
         var floatValue = float.Parse(args[0]);
         setValue(floatValue);
 
-        UserHud.Alert($"{Name} set to {floatValue}");
+        Console.instance.Print($"{Name} set to {floatValue}");
       }
       catch
       {
-        UserHud.Alert($"{Name} not set. Invalid value");
+        Console.instance.Print($"{Name} not set. Invalid value");
       }
     }
   }

@@ -1,7 +1,6 @@
 using BepInEx;
 using HarmonyLib;
 using Jotunn.Utils;
-using System.Collections;
 using UnityEngine;
 using UWU.Behaviors;
 using UWU.Common;
@@ -22,7 +21,7 @@ namespace UWU
     {
       if (isConfigured) return;
       isConfigured = true;
-      Harmony.CreateAndPatchAll(typeof(UWUMod));
+      Harmony.CreateAndPatchAll(typeof(ZNet_Awake_Patch));
 
       featureHost = new GameObject("Features_UWU");
       DontDestroyOnLoad(featureHost);
@@ -55,7 +54,7 @@ namespace UWU
         CreateFeature<ShipNameplateFeature>(),
         CreateFeature<ShipPinFeature>(),
         CreateFeature<ShipRenameFeature>(),
-        //CreateFeature<MoodifierFeature>(),
+        CreateFeature<MoodifierFeature>(),
         CreateFeature<SpeedometerFeature>()
       };
     }

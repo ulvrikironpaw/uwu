@@ -15,6 +15,7 @@ namespace UWU.Features
     protected override string Name => "Moodifier";
     protected override string Category => "Weather";
     protected override string Description => "Modifies weather patterns to set the mood";
+    protected override bool EnabledByDefault => false;
 
     private bool weatherConfigured = false;
 
@@ -24,14 +25,14 @@ namespace UWU.Features
           name: "UWUWeather",
           help: "Attempts to change the local weather to the specified weather name",
           adminOnly: true,
-          isCheat: false,
+          isCheat: true,
           () => EnvMan.instance?.GetCurrentEnvironment()?.m_name ?? "???",
           (envName) => EnvMan.instance?.SetEnvironment_UWU(envName)));
       CommandManager.Instance.AddConsoleCommand(new VoidCommand(
           name: "UWUListWeather",
           help: "Lists all known weather environments",
           adminOnly: true,
-          isCheat: false,
+          isCheat: true,
           (args) => EnvMan.instance?.PrintEnvironments_UWU()));
     }
 

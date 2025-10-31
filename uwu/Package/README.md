@@ -91,8 +91,6 @@ enabled/disabled in the in-game console with the "UWU" prefixed commands.
 
 #### Moodifier
 
-(experimental, not enabled in release branch)
-
 - Adds several more complex weather patterns
 - Enables tweaks to all weather patterns except for Ashlands and the Deep North
 - Meadows has more variety
@@ -102,7 +100,8 @@ enabled/disabled in the in-game console with the "UWU" prefixed commands.
 - Plains has Dust Storm, Golden Dusk added, and Overcast added
 - Ocean has a better distribution of rain, storms, and fog
 - Mistlands has some addition options from Meadow and EtheralMist added
-- Default is true
+- When enabled, this modifies the Environment setup. After disabling it, a restart is required.
+- Default is false **until the next minor release**.
 
 ### Debugging
 
@@ -129,6 +128,9 @@ nameplates are sometimes slightly off-center
 
 ## Changelog
 
+### 0.2.1
+- It is now possible to enable moodifier for QoL weather updates. This will be disabled by default until 0.3.0 
+- Minor tweaks to console commands
 
 ### 0.2.0
 - Large refactor to prevent incompatibilities in one feature causing other features to not load

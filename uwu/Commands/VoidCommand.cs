@@ -2,7 +2,6 @@
 using Jotunn.Managers;
 using System;
 using System.Collections.Generic;
-using UWU.Common;
 
 namespace UWU.Commands
 {
@@ -32,7 +31,7 @@ namespace UWU.Commands
     {
       if (adminOnly && !SynchronizationManager.Instance.PlayerIsAdmin)
       {
-        UserHud.Alert($"{Name} can only be set by an Admin");
+        Console.instance.Print($"{Name} can only be run by an Admin");
         return;
       }
 

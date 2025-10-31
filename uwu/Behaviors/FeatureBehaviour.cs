@@ -46,7 +46,7 @@ namespace UWU.Behaviors
           name: $"UWU{Name}",
           help: $"Enables or disables the UWU{Name} option",
           adminOnly: Synced,
-          isCheat: false,
+          isCheat: true,
           () => FeatureEnabled.Value,
           (value) => FeatureEnabled.Value = value
       ));
